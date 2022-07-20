@@ -1,19 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import secureIcon from "../img/secure tx.svg";
-import auditedLogo from "../img/audited.svg";
-import poweredByLogo from "../img/powered by xp.svg";
 import backIcon from "../img/icon back.svg";
 import editIcon from "../img/edit/default.svg";
 import copyIcon from "../img/copy/default.svg";
 import bscIcon from "../img/BSC.svg";
 import algorandIcon from "../img/Algorand.svg";
 import ToggleButton from "react-toggle-button";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { MAX_CHAR_ADDRESS } from "../utils/consts";
+import { cutDigitAfterDot } from "../utils/utilsFunc";
 
 export default function Confirmation() {
   const [approveTransaction, setApproveTransaction] = useState(false);
+  const [recievingValueInDollar, setRecievingValueInDollar] = useState(0);
+  const transaction = useSelector((state) => state.account.transactionDetails);
+  const address = useSelector((state) => state.account.address);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    let valueInDollar =
+      (transaction.xpnetAmount - transaction.fee) * transaction.xpnetTokenPrice;
+    setRecievingValueInDollar(valueInDollar);
+  }, [transaction.xpnetAmount, transaction.fee, transaction.xpnetTokenPrice]);
 
   const handleChangeApprove = (e) => {
     setApproveTransaction(e.checked);
+  };
+
+  const editXpnetTokenAmount = () => {};
+
+  const sendTransaction = () => {
+    // TO DO : send transaction
+    if (approveTransaction) {
+      navigate("/BridgingReport");
+    }
   };
   return (
     <>
@@ -21,73 +43,103 @@ export default function Confirmation() {
         <div className="transferBox">
           <div className="wraperConfirm">
             <div
-              className="connectWalletRow"
+              className="connectWalletRow noMargin"
               style={{ justifyContent: "flex-start" }}
             >
               <label className="connectWalletLabel selfCenter">
                 Bridging confirmation
               </label>
-              <button className="navBtn" style={{ margin: "0px" }}>
+              <Link to="/" className="navBtn" style={{ margin: "0px" }}>
                 <img src={backIcon}></img>
-              </button>
+              </Link>
             </div>
 
             <div className="flexColumn">
-              <div className="flexColumn" style={{gap:"2px"}}>
+              <div className="flexColumn" style={{ gap: "2px" }}>
                 <div className="flexRow">
                   <label className="confirmTitle">Receiving</label>
                   <label className="recievingAmountLabel">
-                    15,000 <span className="confirmTextLabel">&nbsp;XPNET</span>
+                    {transaction.xpnetAmount - transaction.fee}{" "}
+                    <span className="confirmTextLabel">&nbsp;XPNET</span>
                   </label>
                 </div>
-                <label className="xpnetValueDollar">$0.078</label>
+                <label className="xpnetValueDollar">
+                  ${cutDigitAfterDot(recievingValueInDollar, 4)}
+                </label>
               </div>
               <label className="line"></label>
-              <div className="flexRow">
+              <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Sending amount</label>
-                <div className="greyBox">
-                  15.000
-                  <label style={{ color: "#62718A" }}>XPNET</label>
-                  <img src={editIcon} />
+                <div className="greyBox greyBoxMobileConfirmation">
+                  {transaction.xpnetAmount}
+                  <label style={{ color: "#62718A" }}>
+                    XPNET
+                    {/* <img src={editIcon} className="editBtn" onClick={editXpnetTokenAmount}/> */}
+                  </label>
                 </div>
               </div>
-              <div className="flexRow">
+              <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Destination address</label>
-                <div className="greyBox">
-                  <label className="accountAddressLabel">0x9es455</label>
-                  <img src={copyIcon} />
+                <div
+                  className="greyBox greyBoxMobileConfirmation"
+                  style={{ width: "207px" }}
+                >
+                  <label className="accountAddressLabel">
+                    {transaction.destinationAddress.slice(0, MAX_CHAR_ADDRESS) +
+                      "..." +
+                      transaction.destinationAddress.slice(-4)}
+                  </label>
+                  {/* <img src={copyIcon} /> */}
                 </div>
               </div>
-              <div className="flexRow">
+              <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Destination chain</label>
-                <div>
-                  <label className="icontext">
-                    <img src={algorandIcon} />
-                    Algorand
+                <div className="greyBoxMobileConfirmation">
+                  <label className="icontext centerMobile">
+                    {transaction.toChain === "BSC" ? (
+                      <img src={bscIcon} />
+                    ) : (
+                      <img src={algorandIcon} />
+                    )}
+                    {transaction.toChain}
                   </label>
                 </div>
               </div>
-              <div className="flexRow">
+              <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Departure chain</label>
-                <div>
-                  <label className="icontext">
-                    <img src={bscIcon} />
-                    BSC
+                <div className="greyBoxMobileConfirmation">
+                  <label className="icontext centerMobile">
+                    {transaction.fromChain === "BSC" ? (
+                      <img src={bscIcon} />
+                    ) : (
+                      <img src={algorandIcon} />
+                    )}
+                    {transaction.fromChain}
                   </label>
                 </div>
               </div>
-              <div className="flexRow">
-                <label className="confirmTitle">Departure Address</label>
-                <div className="greyBox">
-                  <label className="accountAddressLabel">0x9es455</label>
-                  <img src={copyIcon} />
+              <div className="flexRow mobileColumn">
+                <label className="confirmTitle">Departure address</label>
+                <div
+                  className="greyBox greyBoxMobileConfirmation"
+                  style={{ width: "207px" }}
+                >
+                  <label className="accountAddressLabel">
+                    {address.slice(0, MAX_CHAR_ADDRESS) +
+                      "..." +
+                      address.slice(-4)}
+                  </label>
+                  {/* <img src={copyIcon} /> */}
                 </div>
               </div>
               <label className="line" />
               <div className="flexRow">
-                <label className="confirmTitle">XP bridge Fee</label>
-                <label>0 XPNET</label>
+                <label className="confirmTitle marginTop">Fee</label>
+                <label>
+                  {cutDigitAfterDot(transaction.fee, 2)} {transaction.fromChain}
+                </label>
               </div>
+              <label className="line" />
               <div className="flexRow">
                 <label className="confirmTitle">Approve transaction</label>
                 <ToggleButton
@@ -117,22 +169,22 @@ export default function Confirmation() {
                     setApproveTransaction(!approveTransaction);
                   }}
                 />
-                {/* <Switch onChange={this.handleChangeApprove} checked={approveTransaction} /> */}
               </div>
             </div>
 
-            <button className="connectYourWalletBtn">Send</button>
+            <button
+              className="connectYourWalletBtn sendTranBtn"
+              onClick={sendTransaction}
+              disabled={!approveTransaction}
+            >
+              Send
+            </button>
             <div className="secureLabel">
               <img src={secureIcon} />
               <label>Secure transaction</label>
             </div>
           </div>
         </div>
-        <div className="footerlogos">
-          <img src={poweredByLogo} />
-          <img src={auditedLogo} style={{ marginLeft: "20px" }} />
-        </div>
-        {/* <AddressError/> */}
       </div>
     </>
   );

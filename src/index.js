@@ -6,6 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 function getLibrary(provider) {
   return new Web3Provider(provider);
@@ -14,7 +16,10 @@ function getLibrary(provider) {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Web3ReactProvider getLibrary={getLibrary}>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
+    ,
   </Web3ReactProvider>
 );
 

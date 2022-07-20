@@ -93,8 +93,9 @@ code {
   align-items: flex-start;
   padding: 0px;
   width: 380px;
-  height: 435px;
-  background-color: #FFFFFF;
+  /* height: 435px; */
+  background-color: #FFFFFF !important;
+  opacity: none !important;
   border: 1px solid #FFFFFF;
   filter: drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.14));
   border-radius: 20px;
@@ -106,7 +107,7 @@ code {
   -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
   -o-transform: translate(-50%, -50%); /* Opera */
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 3;
 }
 
 
@@ -141,8 +142,7 @@ code {
 }
 
 .WalletBtn:disabled{
-  background: #858282;
-  border:1px solid #858282;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -177,11 +177,11 @@ line-height: 150%;
   justify-items: center;
   padding: 0px;
   width: 500px;
-  height: 658px;
+  height: auto;
   background-color: #FFFFFF;
   border: 2px solid #FFFFFF;
   border-radius: 20px;
-  margin-top: 180px;
+  margin-top: 80px;
 }
 
 .wraper{
@@ -218,6 +218,8 @@ line-height: 150%;
   align-items: center;
   text-align: center;
   color: #14161A;
+  margin-top: 20px;
+  align-self: center;
 }
 
 .amountLabel{
@@ -267,6 +269,7 @@ line-height: 150%;
   color: #395FEB;
   text-align: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .fieldBox{
@@ -286,6 +289,10 @@ line-height: 150%;
   align-self: center;
 }
 
+.fieldBoxError{
+  background: #F1E1E3;
+}
+
 .icontext{
   display: flex;
   flex-direction: row;
@@ -301,7 +308,6 @@ line-height: 150%;
 .textXpAmount{
   background-color:transparent ;
   border: none;
-  width: 50px;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
@@ -309,9 +315,32 @@ line-height: 150%;
   line-height: 126%;
   display: flex;
   align-items: center;
-  color: #62718A;
+  /* color: #62718A; */
   height: inherit;
   opacity: 0.6;
+  border: none;
+  text-decoration: none;
+  outline: none;
+  color: #14161A !important;
+  width: 70%;
+}
+
+.textXpAmount::-webkit-outer-spin-button,
+.textXpAmount::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.textXpAmountError{
+  color: #E31432 !important;
+  opacity: 1;
+}
+
+.textXpAmount:hover .textXpAmount:focus .textDestAddress:hover .textDestAddress:focus{
+  border: none;
+  text-decoration: none;
+  outline: none;
+  color: #14161A !important;
 }
 
 .Divgap{
@@ -332,14 +361,16 @@ line-height: 150%;
   font-weight: 400;
   font-size: 16px;
   line-height: 126%;
-  color: #62718A;
+  /* color: #62718A; */
+  color: #14161A !important;
   background: none;
   border: none;
   width: inherit;
   overflow: hidden;
   height: inherit;
-
+  outline: none;
 }
+
 
 .connectYourWalletBtn{
   box-sizing: border-box;
@@ -358,6 +389,12 @@ line-height: 150%;
   font-weight: 500;
   font-size: 16px;
   color: #FFFFFF;
+  cursor: pointer;
+}
+
+
+.sendTranBtn:disabled{
+  opacity: 0.5;
 }
 
 .secureLabel{
@@ -376,7 +413,7 @@ line-height: 150%;
 .flexColumn{
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
  
 .gap15{
@@ -389,6 +426,7 @@ line-height: 150%;
 }
 
 .addressError{
+  padding-bottom: 50px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -407,8 +445,14 @@ line-height: 150%;
   line-height: 160%;
   align-items: center;
   color: #FFFFFF;
+  align-self: center;
+  order: 3;
 }
 
+.amountError{
+  background: #E31432 !important;
+  width: 383px !important;
+}
 .connectWalletRow{
   display: flex;
   flex-direction: row;
@@ -481,19 +525,17 @@ color: #14161A;
 
 .accountAddressLabel{
   font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 14px;
-line-height: 126%;
-/* identical to box height, or 18px */
-
-display: flex;
-align-items: center;
-letter-spacing: 0.03em;
-
-/* Primary blue */
-
-color: #395FEB;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 126%;
+  align-content:space-between;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.03em;
+  justify-items: space-between;
+  color: #395FEB;
+  
 }
 
 .togglebtn{
@@ -532,4 +574,146 @@ font-weight: 500;
 font-size: 14px;
 line-height: 126%;
 
+}
+
+.swapBtn{
+  z-index: 2;
+  margin-top: 5px;
+  filter: drop-shadow(0px 4px 9px rgba(0, 0, 0, 0.08));
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.swapBtn:hover{
+  content: url("/src/img/swap\ hover.svg");
+}
+
+button{
+  border: none;
+  background: none;
+}
+
+.background{
+  background: #12151C;
+  opacity: 0.5;
+  width: 100vw;
+  height: 120vh;
+  top: 0;
+  left: 0;
+  position: absolute;
+  
+}
+
+ .secureLabel{
+    margin-bottom: 20px;
+  }
+  .mobileOnly{
+    display: none;
+  }
+
+  .noMargin{
+    margin: 0;
+  }
+  
+  .pointer{
+    cursor: pointer;
+  }
+
+  .copyImgIcon:hover{
+    content: url("/src/img/copy/hover.svg");
+    cursor: pointer;
+  }
+  
+
+
+@media only screen and (max-width:700px) {
+  .transferBox{
+    width: 95vw;
+    height: auto;
+    margin-top: 40px;
+    padding: 10px 0px;
+  }
+
+  .wraper{
+    width: 90vw;
+    padding: 0px;
+    /* padding-top: 40px; */
+    gap: 40px;
+  }
+
+  .wraperConfirm{
+    width: 90vw;
+    padding: 0px;
+    /* padding-top: 40px; */
+    gap: 40px;
+  }
+
+  .transferBoxTitle{
+    font-size: 22px;
+  }
+  .footerlogos{
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    justify-items: space-between;
+  }
+  .fieldBox{
+    width: 90vw;
+  }
+  .connectYourWalletBtn{
+    width: inherit;
+  }
+
+  .connectWalletCompDiv{
+    width: 95vw;
+    height: 427px;
+  }
+
+  .background{
+    height: 130vh;
+  }
+
+  .mobileColumn{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .greyBoxMobileConfirmation{
+    width: -webkit-fill-available !important;
+    height: 42px;
+    padding: 0px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: #ECECF1;
+    border-radius: 9px;
+  }
+  .marginTop{
+    margin: 10px 0px 10px 0px;
+  }
+  .mobileOnly{
+    display: inline-flex;
+  }
+  .amountLabel{
+    font-size: 16px;
+  }
+
+  .centerMobile{
+    justify-content: center;
+    width: inherit;
+  }
+
+  .addressError{
+    bottom: -120px;
+  }
+  .amountError{
+    width: 90vw !important;
+    text-align: left;
+    align-self: center;
+    bottom: 20px;
+  }
 }
