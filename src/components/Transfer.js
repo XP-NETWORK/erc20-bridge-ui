@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import images from "../utils/imges";
 import walletIcon from "../img/wallet.svg";
 import xpnetIcon from "../img/XPNET.svg";
 import bscIcon from "../img/BSC.svg";
@@ -9,7 +8,7 @@ import secureIcon from "../img/secure tx.svg";
 import swapIcon from "../img/swap  default.svg";
 import abi from "../utils/ABI.json";
 import AddressError from "./AddressError";
-import ConnectWallet from "./ConnectWallet";
+// import ConnectWallet from "./ConnectWallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateTransactionDetails } from "../store/accountSlice";
@@ -18,14 +17,19 @@ import { BSC, CONTRACT_ADDRESS } from "../utils/consts";
 import {
   cutDigitAfterDot,
   getFeeValue,
+  getNumberType,
   numberWithCommas,
+  numberWithCommasTyping,
 } from "../utils/utilsFunc";
 import axios from "axios";
 import AmountError from "./AmountError";
+import WrongAddressError from "./WrongAddressError";
+import AmountZeroError from "./AmountZeroError";
 
-export default function Transfer() {
+export default function Transfer(props) {
   const web3 = new Web3();
   const [recievingValueInDollar, setRecievingValueInDollar] = useState(0);
+  const [tokenSymbol, setTokenSymbol] = useState("");
   const [xpnetTokenAmount, setXpnetTokenAmount] = useState(0);
   const [xpnetTokenPrice, setXpnetTokenPrice] = useState(0);
   const [accountBalance, setAccountBalance] = useState(0);
@@ -39,12 +43,35 @@ export default function Transfer() {
   const [isConnected, setIsConnected] = useState(false);
   const [showAddressPasted, setShowAddressPasted] = useState(false);
   const [amountError, setAmountError] = useState(false);
+  const [wrongAddressError, setWrongAddressError] = useState(false);
+  const [amountZero, setAmountZero] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let valueInDollar = (xpnetTokenAmount - calculatedFee) * xpnetTokenPrice;
+    console.log("to", props.to?.toUpperCase());
+    if (props.from?.toUpperCase() === "ALGORAND") {
+      setFromChain("Algorand");
+      setToChain("BSC");
+    }
+    if (props.to?.toUpperCase() === "BSC") {
+      setFromChain("Algorand");
+      setToChain("BSC");
+    }
+    if (props.from?.toUpperCase() === "BSC") {
+      setFromChain("BSC");
+      setToChain("Algorand");
+    }
+    if (props.to?.toUpperCase() === "ALGORAND") {
+      setFromChain("BSC");
+      setToChain("Algorand");
+    }
+  }, [props.from, props.to]);
+
+  useEffect(() => {
+    let valueInDollar =
+      (getNumberType(xpnetTokenAmount) - calculatedFee) * xpnetTokenPrice;
     setRecievingValueInDollar(valueInDollar);
   }, [xpnetTokenAmount, calculatedFee, xpnetTokenPrice]);
 
@@ -53,7 +80,10 @@ export default function Transfer() {
     console.log(calculatedFee);
     console.log(accountBalance);
     console.log(xpnetTokenAmount + calculatedFee, "total");
-    if (Number(xpnetTokenAmount) + Number(calculatedFee) > accountBalance) {
+    if (
+      getNumberType(xpnetTokenAmount) + Number(calculatedFee) >
+      accountBalance
+    ) {
       setAmountError(true);
     } else {
       setAmountError(false);
@@ -71,7 +101,7 @@ export default function Transfer() {
   }, []);
 
   useEffect(() => {
-    setCalculatedFee(xpnetTokenAmount * feePrice);
+    setCalculatedFee(getNumberType(xpnetTokenAmount) * feePrice);
   }, [xpnetTokenAmount, feePrice]);
 
   useEffect(() => {
@@ -79,6 +109,9 @@ export default function Transfer() {
     const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
     async function getBalance() {
       const result = await contract.methods.balanceOf(currentAccount).call(); // 29803630997051883414242659
+      const tokenSymbol = await contract.methods.symbol().call();
+      console.log("tokenSymbol", tokenSymbol);
+      setTokenSymbol(tokenSymbol);
       const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
       const xpnet = Math.floor(format);
       console.log("format", Math.floor(format));
@@ -91,10 +124,11 @@ export default function Transfer() {
     let temp = fromChain;
     setFromChain(toChain);
     setToChain(temp);
+    //isAddressSuitableDestChain();
   };
 
   const handleMaxAmount = () => {
-    setXpnetTokenAmount(accountBalance);
+    setXpnetTokenAmount(getNumberType(accountBalance));
   };
 
   useEffect(() => {
@@ -111,32 +145,102 @@ export default function Transfer() {
 
   const handleBtnClick = () => {
     let transaction = {};
-    if (!isConnected) {
-      setShowConnectWallet(true);
+    // if (!isConnected) {
+    //   setShowConnectWallet(true);
+    // } else {
+    //   console.log("destinationAddress", destinationAddress);
+    if (destinationAddress === "") {
+      setShowAddressPasted(true);
+    }
+    if (getNumberType(xpnetTokenAmount) === 0 || xpnetTokenAmount === "") {
+      setAmountZero(true);
+    }
+    if (
+      getNumberType(xpnetTokenAmount) > 0 &&
+      destinationAddress !== "" &&
+      isAddressSuitableDestChain() &&
+      getNumberType(xpnetTokenAmount) + calculatedFee <= accountBalance
+    ) {
+      transaction = {
+        tokenSymbol: tokenSymbol,
+        xpnetTokenPrice: xpnetTokenPrice,
+        xpnetAmount: getNumberType(xpnetTokenAmount),
+        destinationAddress: destinationAddress,
+        fromChain: fromChain,
+        toChain: toChain,
+        fee: calculatedFee,
+        recievingValueInDollar: recievingValueInDollar,
+      };
+      dispatch(updateTransactionDetails(transaction));
+      navigate("/BridgingConfirmation");
+    }
+    // }
+  };
+
+  const verifyEVMAddress = () => {
+    console.log("dest", destinationAddress);
+    if (ethers.utils.isAddress(destinationAddress)) {
+      return true;
     } else {
-      console.log("destinationAddress", destinationAddress);
-      if (destinationAddress === "") {
-        setShowAddressPasted(true);
-      }
-      if (
-        xpnetTokenAmount > 0 &&
-        destinationAddress !== "" &&
-        xpnetTokenAmount + calculatedFee <= accountBalance
-      ) {
-        transaction = {
-          xpnetTokenPrice: xpnetTokenPrice,
-          xpnetAmount: xpnetTokenAmount,
-          destinationAddress: destinationAddress,
-          fromChain: fromChain,
-          toChain: toChain,
-          fee: calculatedFee,
-          recievingValueInDollar: recievingValueInDollar,
-        };
-        dispatch(updateTransactionDetails(transaction));
-        navigate("/BridgingConfirmation");
-      }
+      return false;
     }
   };
+
+  const verifyAlgoAddress = () => {
+    if (destinationAddress.length === 58) {
+      console.log("its algo address", destinationAddress);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isAddressSuitableDestChain = () => {
+    if (verifyEVMAddress() && toChain === "BSC") {
+      console.log("its bsc address", destinationAddress);
+      console.log("to chain", toChain);
+      setWrongAddressError(false);
+      return true;
+    }
+    if (verifyAlgoAddress() && toChain === "Algorand") {
+      setWrongAddressError(false);
+      return true;
+    } else {
+      setWrongAddressError(true);
+      return false;
+    }
+  };
+
+  const handleAddressChanged = (e) => {
+    if (e.target.value !== "") {
+      setDestinationAddress(e.target.value);
+      setShowAddressPasted(false);
+    }
+  };
+
+  const handleTokenAmountChange = (e) => {
+    let numAsString = e.target.value.toString();
+    console.log("string number", numAsString);
+    if (e.target.value !== 0) {
+      setAmountZero(false);
+    }
+    if (numAsString[0] === "0" || numAsString.match(/[a-z]/i)) {
+      console.log("zero is zero");
+      setAmountZero(true);
+    }
+    console.log("----------", numberWithCommas(e.target.value));
+    setXpnetTokenAmount(e.target.value);
+
+    // setXpnetTokenAmount(
+    //   numberWithCommas(e.target.value)
+    // );
+  };
+
+  useEffect(() => {
+    if (destinationAddress !== "") {
+      isAddressSuitableDestChain();
+    }
+  }, [destinationAddress, fromChain, toChain]);
 
   // const handleOpenConnectComp = () => {
   //   setShowConnectWallet(true);
@@ -145,16 +249,22 @@ export default function Transfer() {
   const handleCloseConnectComp = () => {
     setShowConnectWallet(false);
   };
+  const handleAmountZeroError = (isShow) => {
+    setAmountZero(isShow);
+  };
 
   const handleAddressError = (isShow) => {
     setShowAddressPasted(isShow);
+  };
+
+  const handleWrongAddressError = (isShow) => {
+    setWrongAddressError(isShow);
   };
 
   const handleAmountError = (isShow) => {
     setAmountError(isShow);
   };
 
-  console.log(isConnected);
   return (
     <>
       <div className="flexColumn">
@@ -173,7 +283,7 @@ export default function Transfer() {
                 >
                   <img src={walletIcon} />
                   <label className="xpnetAmount">
-                    {numberWithCommas(accountBalance)} XPNET
+                    {numberWithCommas(accountBalance)} {tokenSymbol}
                   </label>
                   <button className="maxLabel" onClick={handleMaxAmount}>
                     MAX
@@ -181,7 +291,9 @@ export default function Transfer() {
                 </label>
               </div>
               <div
-                className={amountError ? "fieldBox fieldBoxError" : "fieldBox"}
+                className={
+                  amountError ? "fieldBox fieldBoxError" : "fieldBox inputText"
+                }
               >
                 <input
                   className={
@@ -189,16 +301,19 @@ export default function Transfer() {
                       ? "textXpAmount textXpAmountError"
                       : "textXpAmount"
                   }
-                  type="number"
+                  type="text"
                   placeholder={xpnetTokenAmount}
-                  min={0}
-                  max={10000000000}
-                  onChange={(e) => setXpnetTokenAmount(e.target.value)}
-                  // value={numberWithCommas(xpnetTokenAmount)}
+                  // min={0}
+                  // max={10000000000}
+                  onFocus={() =>
+                    xpnetTokenAmount == 0 ? setXpnetTokenAmount("") : null
+                  }
+                  onChange={handleTokenAmountChange}
+                  value={numberWithCommasTyping(xpnetTokenAmount)}
                 />
                 <label className="icontext">
                   <img src={xpnetIcon} />
-                  XPNET
+                  {tokenSymbol}
                 </label>
               </div>
 
@@ -219,12 +334,23 @@ export default function Transfer() {
                   </label>
                 </div>
               </div>
-              <div className="fieldBox">
+              <div
+                className={
+                  wrongAddressError
+                    ? "fieldBox fieldBoxError"
+                    : "fieldBox inputText"
+                }
+              >
                 <input
-                  className="textDestAddress"
+                  className={
+                    wrongAddressError
+                      ? "textDestAddress textXpAmountError"
+                      : "textDestAddress"
+                  }
                   type="text"
                   placeholder="Paste destination address"
-                  onChange={(e) => setDestinationAddress(e.target.value)}
+                  onInput={handleAddressChanged}
+                  onChange={handleAddressChanged}
                 />
               </div>
               <div className="flexRow">
@@ -236,7 +362,8 @@ export default function Transfer() {
               </div>
             </div>
             <button className="connectYourWalletBtn" onClick={handleBtnClick}>
-              {isConnected ? "Next" : "Connect your wallet"}
+              {/* {isConnected ? "Next" : "Connect your wallet"} */}
+              Next
             </button>
             <div className="secureLabel">
               <img src={secureIcon} />
@@ -244,12 +371,18 @@ export default function Transfer() {
             </div>
           </div>
         </div>
-        {showConnectWallet && <ConnectWallet isOpen={handleCloseConnectComp} />}
+        {/* {showConnectWallet && <ConnectWallet isOpen={handleCloseConnectComp} />} */}
       </div>
+      {amountZero && (
+        <AmountZeroError showAmountZeroError={handleAmountZeroError} />
+      )}
       {showAddressPasted && (
         <AddressError showAddressError={handleAddressError} />
       )}
       {amountError && <AmountError showAmountError={handleAmountError} />}
+      {wrongAddressError && (
+        <WrongAddressError showWrongAddressError={handleWrongAddressError} />
+      )}
     </>
   );
 }

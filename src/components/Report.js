@@ -61,7 +61,9 @@ export default function Report() {
                 style={{ alignSelf: "center" }}
               >
                 {transaction.xpnetAmount - transaction.fee}
-                <span className="confirmTextLabel">&nbsp;XPNET</span>
+                <span className="confirmTextLabel">
+                  &nbsp;{transaction.tokenSymbol}
+                </span>
               </label>
               <label
                 className="xpnetValueDollar center"
@@ -116,7 +118,7 @@ export default function Report() {
               <div className="flexRow ">
                 <label className="confirmTitle">Fee</label>
                 <label>
-                  {transaction.fee} {transaction.fromChain}
+                  {cutDigitAfterDot(transaction.fee, 2)} {transaction.fromChain}
                 </label>
               </div>
             </div>

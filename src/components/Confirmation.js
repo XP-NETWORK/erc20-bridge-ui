@@ -9,7 +9,7 @@ import ToggleButton from "react-toggle-button";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { MAX_CHAR_ADDRESS } from "../utils/consts";
-import { cutDigitAfterDot } from "../utils/utilsFunc";
+import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
 
 export default function Confirmation() {
   const [approveTransaction, setApproveTransaction] = useState(false);
@@ -54,13 +54,17 @@ export default function Confirmation() {
               </Link>
             </div>
 
-            <div className="flexColumn">
+            <div className="flexColumn" style={{ gap: "15px" }}>
               <div className="flexColumn" style={{ gap: "2px" }}>
                 <div className="flexRow">
                   <label className="confirmTitle">Receiving</label>
                   <label className="recievingAmountLabel">
-                    {transaction.xpnetAmount - transaction.fee}{" "}
-                    <span className="confirmTextLabel">&nbsp;XPNET</span>
+                    {numberWithCommas(
+                      transaction.xpnetAmount - transaction.fee
+                    )}
+                    <span className="confirmTextLabel">
+                      &nbsp;{transaction.tokenSymbol}
+                    </span>
                   </label>
                 </div>
                 <label className="xpnetValueDollar">
@@ -71,9 +75,9 @@ export default function Confirmation() {
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Sending amount</label>
                 <div className="greyBox greyBoxMobileConfirmation">
-                  {transaction.xpnetAmount}
+                  {numberWithCommas(transaction.xpnetAmount)}
                   <label style={{ color: "#62718A" }}>
-                    XPNET
+                  {transaction.tokenSymbol}
                     {/* <img src={editIcon} className="editBtn" onClick={editXpnetTokenAmount}/> */}
                   </label>
                 </div>

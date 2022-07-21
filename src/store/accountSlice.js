@@ -4,6 +4,7 @@ const initialState = {
   address: "",
   signature: "",
   transactionDetails: {
+    tokenSymbol:"",
     xpnetTokenPrice: 0,
     xpnetAmount: 0,
     destinationAddress: "",
