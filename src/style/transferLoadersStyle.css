@@ -1,0 +1,125 @@
+.transfer-loader-modal {
+  /* background-color: rgba(0, 0, 0, 0.596); */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px 0px 40px;
+
+  position: absolute;
+  width: 370px;
+  height: 300px;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.14);
+  border-radius: 20px;
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  -moz-transform: translate(-50%, -50%); /* Firefox */
+  -ms-transform: translate(-50%, -50%); /* IE 9 */
+  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, -50%); /* Opera */
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.transfer-loader-modal .h4 {
+  font-size: 16px;
+}
+
+.transfer-loader__animation {
+  padding: 60px 40px 20px 40px;
+}
+
+.transfer-loader__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 50px 20px;
+  color: #14161a;
+}
+
+.transfer-loader__title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 21.78px;
+  color: #14161a;
+  padding-bottom: 28px;
+}
+
+.transfer-loader__text {
+  text-align: center;
+  padding-bottom: 30px;
+}
+
+.transfer-loader__sub {
+  padding-bottom: 30px;
+}
+
+/* Animation */
+.center {
+  /* height: 5vh; */
+  transform: scale(0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wave {
+  width: 5px;
+  height: 60px;
+  background: linear-gradient(180deg, #8ea5ff 0%, #125ecd 47.4%, #3e64ed 100%);
+  margin: 10px;
+  animation: wave 1s linear infinite;
+  border-radius: 20px;
+}
+.wave:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.wave:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.wave:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.wave:nth-child(5) {
+  animation-delay: 0.4s;
+}
+.wave:nth-child(6) {
+  animation-delay: 0.5s;
+}
+.wave:nth-child(7) {
+  animation-delay: 0.6s;
+}
+.wave:nth-child(8) {
+  animation-delay: 0.7s;
+}
+.wave:nth-child(9) {
+  animation-delay: 0.8s;
+}
+.wave:nth-child(10) {
+  animation-delay: 0.9s;
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .transfer-loader-modal .modal-sm {
+    max-width: 370px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .transfer-loader-modal .modal-content {
+    transform: scale(0.9);
+  }
+}

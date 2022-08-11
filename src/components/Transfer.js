@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateTransactionDetails } from "../store/accountSlice";
 import Web3 from "web3";
-import { BSC, CONTRACT_ADDRESS } from "../utils/consts";
+import { BSC, CHAINS_TYPE, CONTRACT_ADDRESS } from "../utils/consts";
 import {
   cutDigitAfterDot,
   getFeeValue,
@@ -25,6 +25,12 @@ import axios from "axios";
 import AmountError from "./AmountError";
 import WrongAddressError from "./WrongAddressError";
 import AmountZeroError from "./AmountZeroError";
+import {
+  getAccountBalance,
+  getFeeAlgoToBsc,
+  getFeeBscToAlgo,
+} from "../erc20/erc20Utils";
+import { useWeb3React } from "@web3-react/core";
 
 export default function Transfer(props) {
   const web3 = new Web3();
@@ -33,11 +39,11 @@ export default function Transfer(props) {
   const [xpnetTokenAmount, setXpnetTokenAmount] = useState(0);
   const [xpnetTokenPrice, setXpnetTokenPrice] = useState(0);
   const [accountBalance, setAccountBalance] = useState(0);
-  const [fromChain, setFromChain] = useState("BSC");
-  const [toChain, setToChain] = useState("Algorand");
+  const [fromChain, setFromChain] = useState(CHAINS_TYPE.BSC);
+  const [toChain, setToChain] = useState(CHAINS_TYPE.Algorand);
   const [destinationAddress, setDestinationAddress] = useState("");
   const [calculatedFee, setCalculatedFee] = useState(0);
-  const [feePrice, setFeePrice] = useState(0.2);
+  // const [feePrice, setFeePrice] = useState(0.2);
   const [showConnectWallet, setShowConnectWallet] = useState(false);
   const currentAccount = useSelector((state) => state.account.address);
   const [isConnected, setIsConnected] = useState(false);
@@ -45,27 +51,50 @@ export default function Transfer(props) {
   const [amountError, setAmountError] = useState(false);
   const [wrongAddressError, setWrongAddressError] = useState(false);
   const [amountZero, setAmountZero] = useState(false);
+  const { active } = useWeb3React();
+
+  const [feeBSC, setfeeBSC] = useState();
+  const [feeAlgo, setFeeAlgo] = useState();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const getFees = async () => {
+    let feeBsc = await getFeeBscToAlgo();
+    let feealgo = await getFeeAlgoToBsc();
+    setfeeBSC(feeBsc);
+    setFeeAlgo(feealgo);
+  };
+
   useEffect(() => {
-    console.log("to", props.to?.toUpperCase());
-    if (props.from?.toUpperCase() === "ALGORAND") {
-      setFromChain("Algorand");
-      setToChain("BSC");
+    async function getFee() {
+      getFees();
+      let feeBsc = await getFeeBscToAlgo();
+      setCalculatedFee(feeBsc);
     }
-    if (props.to?.toUpperCase() === "BSC") {
-      setFromChain("Algorand");
-      setToChain("BSC");
+    getFee();
+  }, []);
+
+  // console.log("feebsc", feeBSC);
+  // console.log("feeAlgo", feeAlgo);
+  // console.log("fee", calculatedFee);
+
+  useEffect(() => {
+    if (props.from?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
+      setFromChain(CHAINS_TYPE.Algorand);
+      setToChain(CHAINS_TYPE.BSC);
     }
-    if (props.from?.toUpperCase() === "BSC") {
-      setFromChain("BSC");
-      setToChain("Algorand");
+    if (props.to?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
+      setFromChain(CHAINS_TYPE.Algorand);
+      setToChain(CHAINS_TYPE.BSC);
     }
-    if (props.to?.toUpperCase() === "ALGORAND") {
-      setFromChain("BSC");
-      setToChain("Algorand");
+    if (props.from?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
+      setFromChain(CHAINS_TYPE.BSC);
+      setToChain(CHAINS_TYPE.Algorand);
+    }
+    if (props.to?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
+      setFromChain(CHAINS_TYPE.BSC);
+      setToChain(CHAINS_TYPE.Algorand);
     }
   }, [props.from, props.to]);
 
@@ -76,10 +105,7 @@ export default function Transfer(props) {
   }, [xpnetTokenAmount, calculatedFee, xpnetTokenPrice]);
 
   useEffect(() => {
-    console.log(xpnetTokenAmount);
-    console.log(calculatedFee);
-    console.log(accountBalance);
-    console.log(xpnetTokenAmount + calculatedFee, "total");
+    // console.log(xpnetTokenAmount + calculatedFee, "total");
     if (
       getNumberType(xpnetTokenAmount) + Number(calculatedFee) >
       accountBalance
@@ -100,30 +126,49 @@ export default function Transfer(props) {
     // setFee(feeXp);
   }, []);
 
-  useEffect(() => {
-    setCalculatedFee(getNumberType(xpnetTokenAmount) * feePrice);
-  }, [xpnetTokenAmount, feePrice]);
+  // useEffect(() => {
+  //   setCalculatedFee(getNumberType(xpnetTokenAmount) * feePrice);
+  // }, [xpnetTokenAmount, feePrice]);
 
   useEffect(() => {
-    const Web3Client = new Web3(new Web3.providers.HttpProvider(BSC));
-    const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
-    async function getBalance() {
-      const result = await contract.methods.balanceOf(currentAccount).call(); // 29803630997051883414242659
-      const tokenSymbol = await contract.methods.symbol().call();
-      console.log("tokenSymbol", tokenSymbol);
-      setTokenSymbol(tokenSymbol);
-      const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
-      const xpnet = Math.floor(format);
-      console.log("format", Math.floor(format));
-      setAccountBalance(xpnet);
+    if (active) {
+      console.log("yes metamask");
+      const Web3Client = new Web3(new Web3.providers.HttpProvider(BSC));
+      const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
+      async function getBalance() {
+        const result = await contract.methods.balanceOf(currentAccount).call(); // 29803630997051883414242659
+        const tokenSymbol = await contract.methods.symbol().call();
+        setTokenSymbol(tokenSymbol);
+        const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
+        const xpnet = Math.floor(format);
+        setAccountBalance(xpnet);
+        console.log("balance", xpnet);
+        //getAccountBalance(address,)
+      }
+      getBalance().catch(console.error);
+    } else {
+      async function getBalance() {
+        let balance = await getAccountBalance(
+          currentAccount,
+          CHAINS_TYPE.Algorand
+        );
+        console.log("not metamask");
+        setAccountBalance(balance);
+      }
+      getBalance().catch(console.error);
     }
-    getBalance().catch(console.error);
   }, [currentAccount]);
 
   const swapChains = () => {
+    if (fromChain === CHAINS_TYPE.BSC) {
+      setCalculatedFee(feeAlgo);
+    } else {
+      setCalculatedFee(feeBSC);
+    }
     let temp = fromChain;
     setFromChain(toChain);
     setToChain(temp);
+
     //isAddressSuitableDestChain();
   };
 
@@ -158,8 +203,8 @@ export default function Transfer(props) {
     if (
       getNumberType(xpnetTokenAmount) > 0 &&
       destinationAddress !== "" &&
-      isAddressSuitableDestChain() &&
-      getNumberType(xpnetTokenAmount) + calculatedFee <= accountBalance
+      isAddressSuitableDestChain()
+      // &&getNumberType(xpnetTokenAmount) + calculatedFee <= accountBalance
     ) {
       transaction = {
         tokenSymbol: tokenSymbol,
@@ -171,6 +216,7 @@ export default function Transfer(props) {
         fee: calculatedFee,
         recievingValueInDollar: recievingValueInDollar,
       };
+      console.log("inside if im about to nav");
       dispatch(updateTransactionDetails(transaction));
       navigate("/BridgingConfirmation");
     }
@@ -178,7 +224,6 @@ export default function Transfer(props) {
   };
 
   const verifyEVMAddress = () => {
-    console.log("dest", destinationAddress);
     if (ethers.utils.isAddress(destinationAddress)) {
       return true;
     } else {
@@ -188,7 +233,6 @@ export default function Transfer(props) {
 
   const verifyAlgoAddress = () => {
     if (destinationAddress.length === 58) {
-      console.log("its algo address", destinationAddress);
       return true;
     } else {
       return false;
@@ -196,13 +240,11 @@ export default function Transfer(props) {
   };
 
   const isAddressSuitableDestChain = () => {
-    if (verifyEVMAddress() && toChain === "BSC") {
-      console.log("its bsc address", destinationAddress);
-      console.log("to chain", toChain);
+    if (verifyEVMAddress() && toChain === CHAINS_TYPE.BSC) {
       setWrongAddressError(false);
       return true;
     }
-    if (verifyAlgoAddress() && toChain === "Algorand") {
+    if (verifyAlgoAddress() && toChain === CHAINS_TYPE.Algorand) {
       setWrongAddressError(false);
       return true;
     } else {
@@ -220,15 +262,12 @@ export default function Transfer(props) {
 
   const handleTokenAmountChange = (e) => {
     let numAsString = e.target.value.toString();
-    console.log("string number", numAsString);
     if (e.target.value !== 0) {
       setAmountZero(false);
     }
     if (numAsString[0] === "0" || numAsString.match(/[a-z]/i)) {
-      console.log("zero is zero");
       setAmountZero(true);
     }
-    console.log("----------", numberWithCommas(e.target.value));
     setXpnetTokenAmount(e.target.value);
 
     // setXpnetTokenAmount(
@@ -323,13 +362,19 @@ export default function Transfer(props) {
                 </button>
                 <div className="fieldBox blockchain">
                   <label className="icontext">
-                    <img src={fromChain === "BSC" ? bscIcon : algorandIcon} />
+                    <img
+                      src={
+                        fromChain === CHAINS_TYPE.BSC ? bscIcon : algorandIcon
+                      }
+                    />
                     {fromChain}
                   </label>
                 </div>
                 <div className="fieldBox blockchain">
                   <label className="icontext">
-                    <img src={toChain === "BSC" ? bscIcon : algorandIcon} />
+                    <img
+                      src={toChain === CHAINS_TYPE.BSC ? bscIcon : algorandIcon}
+                    />
                     {toChain}
                   </label>
                 </div>
@@ -356,8 +401,10 @@ export default function Transfer(props) {
               <div className="flexRow">
                 <label className="amountLabel">Fee:</label>
                 <label className="amountLabel flexRow">
-                  {calculatedFee === 0 ? 0 : cutDigitAfterDot(calculatedFee, 2)}{" "}
-                  {fromChain}
+                  {calculatedFee === 0
+                    ? 0
+                    : cutDigitAfterDot(calculatedFee, 10)}{" "}
+                  {fromChain === CHAINS_TYPE.BSC ? "BNB" : "Algo"}
                 </label>
               </div>
             </div>

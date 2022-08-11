@@ -8,33 +8,90 @@ import algorandIcon from "../img/Algorand.svg";
 import ToggleButton from "react-toggle-button";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { MAX_CHAR_ADDRESS } from "../utils/consts";
+import { CHAINS_TYPE, MAX_CHAR_ADDRESS } from "../utils/consts";
 import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
+import { preTransfer, transfer } from "../erc20/erc20Utils";
+import { TransferError } from "xpjs-erc20";
+import OptInPopup from "./OptInPopup";
+import Loader from "./loaders/Loader";
+import ApprovalLoader from "./loaders/ApprovalLoader";
+import TransferLoader from "./loaders/TransferLoader";
+import { updateHash } from "../store/accountSlice";
 
 export default function Confirmation() {
   const [approveTransaction, setApproveTransaction] = useState(false);
+  const [showOptIn, setShowOptIn] = useState(false);
+  const [showApprovalLoader, setShowApprovalLoader] = useState(false);
+  const [showTransferLoader, setShowTransferLoader] = useState(false);
+
+  const [assetId, setAssetId] = useState("");
+
   const [recievingValueInDollar, setRecievingValueInDollar] = useState(0);
   const transaction = useSelector((state) => state.account.transactionDetails);
   const address = useSelector((state) => state.account.address);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  console.log("addresss", address);
   useEffect(() => {
     let valueInDollar =
       (transaction.xpnetAmount - transaction.fee) * transaction.xpnetTokenPrice;
     setRecievingValueInDollar(valueInDollar);
   }, [transaction.xpnetAmount, transaction.fee, transaction.xpnetTokenPrice]);
 
-  const handleChangeApprove = (e) => {
-    setApproveTransaction(e.checked);
+  const handleChangeApprove = async (e) => {
+    let pretransfer;
+    if (!approveTransaction) {
+      setShowApprovalLoader(true);
+      pretransfer = await preTransfer(
+        transaction.fromChain,
+        transaction.xpnetAmount,
+        address
+      );
+      setShowApprovalLoader(false);
+    }
+    setApproveTransaction(!approveTransaction);
   };
 
   const editXpnetTokenAmount = () => {};
 
-  const sendTransaction = () => {
+  // const transfer = async () => {
+  //   let sourceHash = await transfer(
+  //     transaction.fromChain,
+  //     transaction.toChain,
+  //     transaction.xpnetAmount,
+  //     transaction.destinationAddress,
+  //     address
+  //   );
+  //   return sourceHash;
+  // };
+
+  const sendTransaction = async () => {
     // TO DO : send transaction
     if (approveTransaction) {
-      navigate("/BridgingReport");
+      setShowTransferLoader(true);
+      try {
+        let sourceHash = await transfer(
+          transaction.fromChain,
+          transaction.toChain,
+          transaction.xpnetAmount,
+          transaction.destinationAddress,
+          address
+        );
+        dispatch(updateHash(sourceHash));
+        setShowTransferLoader(false);
+        navigate(`/BridgingReport`);
+      } catch (e) {
+        setShowTransferLoader(false);
+        if (!(e instanceof TransferError)) {
+          // Some other error
+          console.log(e);
+        }
+        const assetId = e.data;
+        setAssetId(assetId);
+        setShowOptIn(true);
+      }
+      //navigate("/BridgingReport");
     }
   };
   return (
@@ -60,7 +117,10 @@ export default function Confirmation() {
                   <label className="confirmTitle">Receiving</label>
                   <label className="recievingAmountLabel">
                     {numberWithCommas(
-                      transaction.xpnetAmount - transaction.fee
+                      cutDigitAfterDot(
+                        transaction.xpnetAmount - transaction.fee,
+                        3
+                      )
                     )}
                     <span className="confirmTextLabel">
                       &nbsp;{transaction.tokenSymbol}
@@ -77,17 +137,14 @@ export default function Confirmation() {
                 <div className="greyBox greyBoxMobileConfirmation">
                   {numberWithCommas(transaction.xpnetAmount)}
                   <label style={{ color: "#62718A" }}>
-                  {transaction.tokenSymbol}
+                    {transaction.tokenSymbol}
                     {/* <img src={editIcon} className="editBtn" onClick={editXpnetTokenAmount}/> */}
                   </label>
                 </div>
               </div>
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Destination address</label>
-                <div
-                  className="greyBox greyBoxMobileConfirmation"
-                  style={{ width: "207px" }}
-                >
+                <div className="greyBox greyBoxMobileConfirmation">
                   <label className="accountAddressLabel">
                     {transaction.destinationAddress.slice(0, MAX_CHAR_ADDRESS) +
                       "..." +
@@ -100,7 +157,7 @@ export default function Confirmation() {
                 <label className="confirmTitle">Destination chain</label>
                 <div className="greyBoxMobileConfirmation">
                   <label className="icontext centerMobile">
-                    {transaction.toChain === "BSC" ? (
+                    {transaction.toChain === CHAINS_TYPE.BSC ? (
                       <img src={bscIcon} />
                     ) : (
                       <img src={algorandIcon} />
@@ -113,7 +170,7 @@ export default function Confirmation() {
                 <label className="confirmTitle">Departure chain</label>
                 <div className="greyBoxMobileConfirmation">
                   <label className="icontext centerMobile">
-                    {transaction.fromChain === "BSC" ? (
+                    {transaction.fromChain === CHAINS_TYPE.BSC ? (
                       <img src={bscIcon} />
                     ) : (
                       <img src={algorandIcon} />
@@ -124,10 +181,7 @@ export default function Confirmation() {
               </div>
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Departure address</label>
-                <div
-                  className="greyBox greyBoxMobileConfirmation"
-                  style={{ width: "207px" }}
-                >
+                <div className="greyBox greyBoxMobileConfirmation">
                   <label className="accountAddressLabel">
                     {address.slice(0, MAX_CHAR_ADDRESS) +
                       "..." +
@@ -140,7 +194,8 @@ export default function Confirmation() {
               <div className="flexRow">
                 <label className="confirmTitle marginTop">Fee</label>
                 <label>
-                  {cutDigitAfterDot(transaction.fee, 2)} {transaction.fromChain}
+                  {cutDigitAfterDot(transaction.fee, 10)}{" "}
+                  {transaction.fromChain}
                 </label>
               </div>
               <label className="line" />
@@ -169,9 +224,7 @@ export default function Confirmation() {
                     },
                   }}
                   value={approveTransaction}
-                  onToggle={(value) => {
-                    setApproveTransaction(!approveTransaction);
-                  }}
+                  onToggle={handleChangeApprove}
                 />
               </div>
             </div>
@@ -190,6 +243,18 @@ export default function Confirmation() {
           </div>
         </div>
       </div>
+
+      {showOptIn && (
+        <OptInPopup assetId={assetId} closeOptin={() => setShowOptIn(false)} />
+      )}
+      {showApprovalLoader && (
+        <div className="backgroundLoaders">{<ApprovalLoader />}</div>
+      )}
+      {showTransferLoader && (
+        <div className="backgroundLoaders">
+          <TransferLoader />
+        </div>
+      )}
     </>
   );
 }

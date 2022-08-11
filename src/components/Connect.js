@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import metaIcon from "../img/wallets/metamask.svg";
-// import images from "../utils/imges";
 import MyAlgoIcon from "../img/myalgo-logo.svg";
 import { useDispatch } from "react-redux";
 import { useWeb3React } from "@web3-react/core";
@@ -8,6 +7,8 @@ import { connectedAccount } from "../store/accountSlice";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { InjectedMetaMask } from "../utils/connectors";
 import { useNavigate } from "react-router-dom";
+import { checkIfOptIn, getFees } from "../erc20/erc20Utils";
+import OptInPopup from "./OptInPopup";
 
 export default function Connect() {
   const { ethereum } = window;
@@ -49,11 +50,16 @@ export default function Connect() {
   };
 
   const connectMyAlgoHandler = async () => {
-    const myAlgoConnect = new MyAlgoConnect();
+    const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
     try {
-      const accountsSharedByUser = await myAlgoConnect.connect();
-      console.log("algo connect", accountsSharedByUser);
+      const settings = {
+        shouldSelectOneAccount: false,
+        openManager: true,
+      };
+      const accountsSharedByUser = await myAlgoConnect.connect(settings);
+      console.log(accountsSharedByUser[0], "algo");
       dispatch(connectedAccount(accountsSharedByUser[0].address));
+      //heckIfOptIn(accountsSharedByUser[0].address);
     } catch (e) {
       console.log(e);
     }

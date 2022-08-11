@@ -10,14 +10,15 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { connectedAccount } from "./store/accountSlice";
 import Connect from "./components/Connect";
+import OptInPopup from "./components/OptInPopup";
 
 function App() {
   const urlParams = new URLSearchParams(window.location.search);
   const [from, setFrom] = useState();
   const [to, setTo] = useState();
-
   const dispatch = useDispatch();
   const { account } = useWeb3React();
+
   useEffect(() => {
     dispatch(connectedAccount(account));
   }, [account]);
@@ -27,7 +28,6 @@ function App() {
     setFrom(from);
     const to = urlParams.get("to");
     setTo(to);
-    console.log("to app", to == "bsc");
   }, [urlParams]);
 
   return (
@@ -36,6 +36,7 @@ function App() {
         <div className="flexColumn">
           <Routes>
             <Route path="/" element={<Connect />} />
+            <Route path="/" element={<OptInPopup />} />
             <Route
               path="/Transfer"
               element={<Transfer from={from} to={to} />}

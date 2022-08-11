@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import cancelBtn from "../img/close popup.svg";
 import auditedLogo from "../img/audited.svg";
 import poweredByLogo from "../img/powered by xp.svg";
@@ -6,14 +6,18 @@ import bscIcon from "../img/BSC.svg";
 import algorandIcon from "../img/Algorand.svg";
 import copyIcon from "../img/copy/default.svg";
 import secureIcon from "../img/secure tx.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTransactionDetails } from "../store/accountSlice";
 import { cutDigitAfterDot } from "../utils/utilsFunc";
+import { CHAINS_TYPE } from "../utils/consts";
 
 export default function Report() {
   const MAX_CHAR_ADDRESS = 15;
   const transaction = useSelector((state) => state.account.transactionDetails);
+  const sourceHash = useSelector((state) => state.account.sourceHash);
+  console.log("source hasg report comp", sourceHash);
+
   const address = useSelector((state) => state.account.address);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,8 +27,8 @@ export default function Report() {
       updateTransactionDetails({
         xpnetAmount: 0,
         destinationAddress: "",
-        fromChain: "BSC",
-        toChain: "Algorand",
+        fromChain: CHAINS_TYPE.BSC,
+        toChain: CHAINS_TYPE.Algorand,
         fee: 0,
       })
     );
@@ -51,7 +55,7 @@ export default function Report() {
             </div>
 
             <div className="flexColumn center" style={{ gap: "2px" }}>
-              {transaction.toChain === "BSC" ? (
+              {transaction.toChain === CHAINS_TYPE.BSC ? (
                 <img src={bscIcon} className="blockchainImg" />
               ) : (
                 <img src={algorandIcon} className="blockchainImg" />
@@ -60,7 +64,7 @@ export default function Report() {
                 className="recievingAmountLabel"
                 style={{ alignSelf: "center" }}
               >
-                {transaction.xpnetAmount - transaction.fee}
+                {cutDigitAfterDot(transaction.xpnetAmount - transaction.fee, 3)}
                 <span className="confirmTextLabel">
                   &nbsp;{transaction.tokenSymbol}
                 </span>
@@ -77,39 +81,48 @@ export default function Report() {
                 <label className="confirmTitle mobileOnly">
                   Transaction ID
                 </label>
-                <div className="greyBox greyBoxMobileConfirmation">
-                  <label className="accountAddressLabel">
-                    1e10991a2f9d6ff36a5872bcd67d43aa9...4d72
-                  </label>
-                  <button>
-                    <img
-                      src={copyIcon}
-                      className="copyImgIcon"
-                      onClick={() => navigator.clipboard.writeText("copied")}
-                    />
-                  </button>
+                <div className="flexRow mobileColumn">
+                  <label className="confirmTitle">Destination hash</label>
+                  <div className="greyBox greyBoxMobileConfirmation">
+                    {transaction.toChain === CHAINS_TYPE.BSC ? (
+                      <img src={bscIcon} />
+                    ) : (
+                      <img src={algorandIcon} />
+                    )}
+
+                    {/* <label className="accountAddressLabel">
+                    {address.slice(0, MAX_CHAR_ADDRESS) +
+                      "..." +
+                      address.slice(-4)}
+                  </label> */}
+                    <button>
+                      <img
+                        src={copyIcon}
+                        className="copyImgIcon"
+                        onClick={() => navigator.clipboard.writeText(address)}
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
               <label className="line" />
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Departure Hash</label>
                 <div className="greyBox greyBoxMobileConfirmation">
-                  {transaction.fromChain === "BSC" ? (
+                  {transaction.fromChain === CHAINS_TYPE.BSC ? (
                     <img src={bscIcon} />
                   ) : (
                     <img src={algorandIcon} />
                   )}
 
                   <label className="accountAddressLabel">
-                    {address.slice(0, MAX_CHAR_ADDRESS) +
-                      "..." +
-                      address.slice(-4)}
+                    {sourceHash ? sourceHash : ""}
                   </label>
                   <button>
                     <img
                       src={copyIcon}
                       className="copyImgIcon"
-                      onClick={() => navigator.clipboard.writeText(address)}
+                      onClick={() => navigator.clipboard.writeText(sourceHash)}
                     />
                   </button>
                 </div>
@@ -118,7 +131,8 @@ export default function Report() {
               <div className="flexRow ">
                 <label className="confirmTitle">Fee</label>
                 <label>
-                  {cutDigitAfterDot(transaction.fee, 2)} {transaction.fromChain}
+                  {cutDigitAfterDot(transaction.fee, 10)}{" "}
+                  {transaction.fromChain}
                 </label>
               </div>
             </div>

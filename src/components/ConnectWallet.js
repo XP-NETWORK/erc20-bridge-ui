@@ -20,9 +20,6 @@ export default function ConnectWallet(props) {
   const [showMetaWallet, setShowMetaWallet] = useState(true);
   const dispatch = useDispatch();
 
-  // console.log("account from wallet connect", account);
-  // console.log("chainID from wallet connect", chainId);
-
   useEffect(() => {
     localStorage.clear();
   }, []);

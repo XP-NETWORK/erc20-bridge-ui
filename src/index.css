@@ -1,123 +1,200 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,500;1,100;1,200&family=Shadows+Into+Light&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,500;1,100;1,200&family=Shadows+Into+Light&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,500;1,100;1,200&family=Shadows+Into+Light&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,500;1,100;1,200&family=Shadows+Into+Light&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Roboto&display=swap");
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
 body {
-	line-height: 1;
+  line-height: 1;
 }
-ol, ul {
-	list-style: none;
+ol,
+ul {
+  list-style: none;
 }
-blockquote, q {
-	quotes: none;
+blockquote,
+q {
+  quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
-
-body{
-    margin-top: 20px ;
-    background-color: #E5E5E5;
+body {
+  margin-top: 20px;
+  background-color: #e5e5e5;
 }
 
-.App{
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    min-height: 100vh;
-    padding-left: 10%;
-    padding-right: 10%;
-    box-sizing: border-box;
-    /* overflow: hidden; */
-    /* display: flex;
+.App {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  padding-left: 10%;
+  padding-right: 10%;
+  box-sizing: border-box;
+  /* overflow: hidden; */
+  /* display: flex;
     justify-content: center; */
 }
 
-
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-
-.selfCenter{
+.selfCenter {
   left: 50%;
   position: absolute;
   flex: 0 1 auto;
   transform: translateX(-50%);
 }
-.connectWalletCompDiv{
+.connectWalletCompDiv {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
   width: 380px;
   /* height: 435px; */
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
   opacity: none !important;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   filter: drop-shadow(0px 4px 24px rgba(0, 0, 0, 0.14));
   border-radius: 20px;
   position: absolute;
   left: 50%;
   top: 42%;
   -moz-transform: translate(-50%, -50%); /* Firefox */
-  -ms-transform: translate(-50%, -50%);  /* IE 9 */
+  -ms-transform: translate(-50%, -50%); /* IE 9 */
   -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
   -o-transform: translate(-50%, -50%); /* Opera */
   transform: translate(-50%, -50%);
   z-index: 3;
 }
 
-
-.flexRow{
+.flexRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.WalletBtn{
+.WalletBtn {
   box-sizing: border-box;
   background-image: url("/src/img/wallets/metamask.svg");
   align-self: center;
@@ -128,49 +205,48 @@ code {
   gap: 12px;
   width: 318px;
   height: 56px;
-  background: #FFFFFF;
-  border: 1px solid #FFFFFF;
+  background: #ffffff;
+  border: 1px solid #ffffff;
   box-shadow: 0px 1px 6px rgba(180, 185, 199, 0.25);
   border-radius: 86px;
   cursor: pointer;
   margin: 4px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 15px;
   line-height: 160%;
 }
 
-.WalletBtn:disabled{
+.WalletBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.connectWalletLabel{
-  font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 18px;
-line-height: 150%;
-  color: #14161A;
+.connectWalletLabel {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+  color: #14161a;
   align-self: center;
 }
 
-
-.navBtn{
+.navBtn {
   padding: 15px;
-  background:none;
-  border:none;
+  background: none;
+  border: none;
   cursor: pointer;
   margin-left: 70px;
   margin-right: 20px;
 }
 
-.myAlgoIcon{
+.myAlgoIcon {
   width: 50px;
 }
 
-.transferBox{
+.transferBox {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -178,13 +254,13 @@ line-height: 150%;
   padding: 0px;
   width: 465px;
   height: auto;
-  background-color: #FFFFFF;
-  border: 2px solid #FFFFFF;
+  background-color: #ffffff;
+  border: 2px solid #ffffff;
   border-radius: 20px;
   margin-top: 80px;
 }
 
-.wraper{
+.wraper {
   padding: 10px;
   width: 380px;
   margin: 0 auto;
@@ -195,7 +271,7 @@ line-height: 150%;
   gap: 20px;
 }
 
-.wraperConfirm{
+.wraperConfirm {
   padding: 10px;
   width: 380px;
   margin: 0 auto;
@@ -206,7 +282,7 @@ line-height: 150%;
   gap: 15px;
 }
 
-.btnWallet{
+.btnWallet {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -216,17 +292,17 @@ line-height: 150%;
   gap: 12px;
   width: 380px;
   height: 196.07px;
-  background: #F9F9FB;
-  border: 1px solid #FFFFFF;
+  background: #f9f9fb;
+  border: 1px solid #ffffff;
   box-shadow: 0px 1px 16px rgba(180, 185, 199, 0.25);
   border-radius: 20px;
   cursor: pointer;
 }
 
-.transferBoxTitle{
+.transferBoxTitle {
   /* width: 450px;
   height: 76px; */
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-style: normal;
   font-weight: 500;
   font-size: 32px;
@@ -234,48 +310,48 @@ line-height: 150%;
   display: flex;
   align-items: center;
   text-align: center;
-  color: #14161A;
+  color: #14161a;
   margin-top: 20px;
   align-self: center;
 }
 
-.amountLabel{
+.amountLabel {
   width: 53px;
   height: 18px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 126%;
   display: flex;
   align-items: center;
-  color: #14161A;
+  color: #14161a;
 }
 
-.flexRow{
+.flexRow {
   width: inherit;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.xpnetAmount{
-  font-family: 'Inter';
+.xpnetAmount {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 126%;
-  color: #62718A;
+  color: #62718a;
 }
 
-.maxLabel{
+.maxLabel {
   padding: 0px 4px;
   gap: 6px;
   width: 36px;
   height: 15px;
-  background: #DEE2F1;
+  background: #dee2f1;
   border-radius: 4px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
@@ -283,13 +359,13 @@ line-height: 150%;
   display: flex;
   align-items: center;
   letter-spacing: 0.03em;
-  color: #395FEB;
+  color: #395feb;
   text-align: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.fieldBox{
+.fieldBox {
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -301,36 +377,36 @@ line-height: 150%;
   width: 380px;
   height: 56px;
 
-  background: #ECECF1;
+  background: #ececf1;
   border-radius: 12px;
   align-self: center;
 }
 
-.inputText:hover{
-  background-color: #F9F9FB !important;
-  border: 1px solid #395FEB !important;
+.inputText:hover {
+  background-color: #f9f9fb !important;
+  border: 1px solid #395feb !important;
 }
 
-.fieldBoxError{
-  background: #F1E1E3;
+.fieldBoxError {
+  background: #f1e1e3;
 }
 
-.icontext{
+.icontext {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 126%;
 }
 
-.textXpAmount{
-  background-color:transparent ;
+.textXpAmount {
+  background-color: transparent;
   border: none;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 28px;
@@ -343,7 +419,7 @@ line-height: 150%;
   border: none;
   text-decoration: none;
   outline: none;
-  color: #14161A !important;
+  color: #14161a !important;
   width: 70%;
 }
 
@@ -353,39 +429,40 @@ line-height: 150%;
   margin: 0;
 }
 
-.textXpAmountError{
-  color: #E31432 !important;
+.textXpAmountError {
+  color: #e31432 !important;
   opacity: 1;
 }
 
-
-.textXpAmount:hover .textXpAmount:focus .textDestAddress:hover .textDestAddress:focus .inputText{
-    background-color: #F9F9FB !important;
-    border: 1px solid #395FEB !important;
+.textXpAmount:hover
+  .textXpAmount:focus
+  .textDestAddress:hover
+  .textDestAddress:focus
+  .inputText {
+  background-color: #f9f9fb !important;
+  border: 1px solid #395feb !important;
 }
 
-
-
-.Divgap{
+.Divgap {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.blockchain{
+.blockchain {
   width: 184px;
   align-items: center;
   justify-content: center;
 }
 
-.textDestAddress{
-  font-family: 'Inter';
+.textDestAddress {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 126%;
   /* color: #62718A; */
-  color: #14161A ;
+  color: #14161a;
   background: none;
   border: none;
   width: inherit;
@@ -394,8 +471,7 @@ line-height: 150%;
   outline: none;
 }
 
-
-.connectYourWalletBtn{
+.connectYourWalletBtn {
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -404,51 +480,50 @@ line-height: 150%;
   padding: 18px 10px;
   width: 380px;
   height: 56px;
-  background: #395FEB;
-  border: 1px solid #395FEB;
+  background: #395feb;
+  border: 1px solid #395feb;
   border-radius: 62px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: pointer;
 }
 
-
-.sendTranBtn:disabled{
+.sendTranBtn:disabled {
   opacity: 0.5;
 }
 
-.secureLabel{
+.secureLabel {
   align-self: center;
   display: flex;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 126%;
-  color: #62718A;
+  color: #62718a;
   align-items: center;
   gap: 4px;
 }
 
-.flexColumn{
+.flexColumn {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
- 
-.gap15{
+
+.gap15 {
   gap: 15px;
 }
-.footerlogos{
+.footerlogos {
   display: flex;
   flex-direction: row;
   align-self: flex-end;
 }
 
-.addressError{
+.addressError {
   padding-bottom: 50px;
   display: flex;
   flex-direction: row;
@@ -461,22 +536,22 @@ line-height: 150%;
   background: #252629;
   box-shadow: 0px 4px 24px rgba(180, 185, 199, 0.35);
   border-radius: 16px;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 160%;
   align-items: center;
-  color: #FFFFFF;
+  color: #ffffff;
   align-self: center;
   order: 3;
 }
 
-.amountError{
-  background: #E31432 !important;
+.amountError {
+  background: #e31432 !important;
   width: 383px;
 }
-.connectWalletRow{
+.connectWalletRow {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -487,119 +562,116 @@ line-height: 150%;
   margin-top: 16px;
 }
 
-.confirmTitle{
-  font-family: 'Inter';
-font-style: normal;
-font-weight: 600;
-font-size: 14px;
-line-height: 126%;
-display: flex;
-align-items: center;
-color: #14161A;
-
+.confirmTitle {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 126%;
+  display: flex;
+  align-items: center;
+  color: #14161a;
 }
 
-.recievingAmountLabel{
-  font-family: 'Inter';
+.recievingAmountLabel {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 28px;
   line-height: 126%;
   display: flex;
   align-items: flex-end;
-  color: #14161A;
+  color: #14161a;
 }
 
-.confirmTextLabel{
-  font-family: 'Inter';
+.confirmTextLabel {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 160%;
 }
 
-.xpnetValueDollar{
-  font-family: 'Inter';
+.xpnetValueDollar {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  line-height: 126%; 
+  line-height: 126%;
   display: flex;
   align-self: flex-end;
   letter-spacing: 0.03em;
-  color: #62718A;
+  color: #62718a;
   justify-content: end;
 }
 
-.line{
-  border: 1px solid #ECECF1;
+.line {
+  border: 1px solid #ececf1;
   width: 100%;
 }
 
-.greyBox{
+.greyBox {
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 6px 8px;
   gap: 10px;
-  background: #ECECF1;
+  background: #ececf1;
   border-radius: 9px;
 }
 
-.accountAddressLabel{
-  font-family: 'Inter';
+.accountAddressLabel {
+  font-family: "Inter";
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 126%;
-  align-content:space-between;
+  align-content: space-between;
   display: flex;
   align-items: center;
   letter-spacing: 0.03em;
   justify-items: space-between;
-  color: #395FEB;
-  
+  color: #395feb;
 }
 
-.togglebtn{
+.togglebtn {
   width: 44px;
   height: 24px;
 }
 
-.blockchainImg{
+.blockchainImg {
   width: 95.45px;
   height: 95.45px;
   margin-bottom: 20px;
   align-self: center;
 }
 
-.center{
+.center {
   align-self: center;
 }
 
-.addressGreyDiv{
+.addressGreyDiv {
   display: flex;
-flex-direction: row;
-justify-content: space-between;
-align-items: center;
-padding: 6px 8px;
-gap: 10px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 10px;
 
-width: 380px;
-height: 30px;
+  width: 380px;
+  height: 30px;
 
-background: #DEE2F1;
-border-radius: 9px;
-color: #395FEB;
-font-family: 'Inter';
-font-style: normal;
-font-weight: 500;
-font-size: 14px;
-line-height: 126%;
-
+  background: #dee2f1;
+  border-radius: 9px;
+  color: #395feb;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 126%;
 }
 
-.swapBtn{
+.swapBtn {
   z-index: 2;
   margin-top: 5px;
   filter: drop-shadow(0px 4px 9px rgba(0, 0, 0, 0.08));
@@ -608,96 +680,131 @@ line-height: 126%;
   cursor: pointer;
 }
 
-.swapBtn:hover{
+.swapBtn:hover {
   content: url("/src/img/swap\ hover.svg");
 }
 
-button{
+button {
   border: none;
   background: none;
 }
 
-.background{
-  background: #12151C;
+.background {
+  background: #12151c;
   opacity: 0.5;
   width: 100vw;
   height: 120vh;
   top: 0;
   left: 0;
   position: absolute;
-  
 }
 
- .secureLabel{
-    margin-bottom: 20px;
-  }
-  .mobileOnly{
-    display: none;
-  }
+.backgroundLoaders {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(64px);
+  opacity: 0.8;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: absolute;
+}
 
-  .noMargin{
-    margin: 0;
-  }
-  
-  .pointer{
-    cursor: pointer;
-  }
+.secureLabel {
+  margin-bottom: 20px;
+}
+.mobileOnly {
+  display: none;
+}
 
-  .copyImgIcon:hover{
-    content: url("/src/img/copy/hover.svg");
-    cursor: pointer;
-  }
-  
+.noMargin {
+  margin: 0;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.copyImgIcon:hover {
+  content: url("/src/img/copy/hover.svg");
+  cursor: pointer;
+}
 
 
-@media only screen and (max-width:700px) {
-  .transferBox{
+.wraperPopup{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0px 40px;
+  opacity: 1 !important;
+  position: absolute;
+  width: 475px;
+  height: 532px;
+  background: #ffffff !important;
+  border: 1px solid #ffffff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.14);
+  border-radius: 20px;
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  -moz-transform: translate(-50%, -50%); /* Firefox */
+  -ms-transform: translate(-50%, -50%); /* IE 9 */
+  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, -50%); /* Opera */
+  transform: translate(-50%, -50%);
+ gap: 10px;
+     backdrop-filter: unset !important;
+     opacity: unset !important;
+}
+
+@media only screen and (max-width: 700px) {
+  .transferBox {
     width: 95vw;
     height: auto;
     margin-top: 80px;
     padding: 10px 0px;
   }
 
-  .wraper{
+  .wraper {
     width: 90vw;
     padding: 0px;
     /* padding-top: 40px; */
     gap: 40px;
   }
 
-  .wraperConfirm{
+  .wraperConfirm {
     width: 90vw;
     padding: 0px;
     /* padding-top: 40px; */
     gap: 40px;
   }
 
-  .transferBoxTitle{
+  .transferBoxTitle {
     font-size: 22px;
   }
-  .footerlogos{
+  .footerlogos {
     display: flex;
     flex-direction: row;
     align-self: center;
     justify-items: space-between;
   }
-  .fieldBox{
+  .fieldBox {
     width: 90vw;
   }
-  .connectYourWalletBtn{
+  .connectYourWalletBtn {
     width: inherit;
   }
 
-  .connectWalletCompDiv{
+  .connectWalletCompDiv {
     width: 95vw;
     height: 427px;
   }
 
-  .background{
+  .background {
     height: 130vh;
   }
 
-  .mobileColumn{
+  .mobileColumn {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -705,46 +812,44 @@ button{
     gap: 8px;
   }
 
-  .greyBoxMobileConfirmation{
+  .greyBoxMobileConfirmation {
     width: -webkit-fill-available !important;
     height: 42px;
     padding: 0px 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    background: #ECECF1;
+    background: #ececf1;
     border-radius: 9px;
   }
-  .marginTop{
+  .marginTop {
     margin: 10px 0px 10px 0px;
   }
-  .mobileOnly{
+  .mobileOnly {
     display: inline-flex;
   }
-  .amountLabel{
+  .amountLabel {
     font-size: 16px;
   }
 
-  .centerMobile{
+  .centerMobile {
     justify-content: center;
     width: inherit;
   }
 
-  
-  .addressError{
+  .addressError {
     width: 80vw !important;
     text-align: left;
     align-self: center;
   }
 
-  .amountError{
+  .amountError {
     width: 80vw !important;
     text-align: left;
     align-self: center;
   }
 
-
-  .btnWallet{
+  .btnWallet {
     width: 80vw;
     align-self: center;
     height: 196.07px;
