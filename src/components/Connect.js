@@ -8,10 +8,14 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { InjectedMetaMask } from "../utils/connectors";
 import { useNavigate } from "react-router-dom";
 import { checkIfOptIn, getFees } from "../erc20/erc20Utils";
-import OptInPopup from "./OptInPopup";
+import OptInPopup from "./errors/OptInPopup";
+import Error from "./errors/Error";
 
 export default function Connect() {
   const { ethereum } = window;
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [isMetaConnected, setIsMetaConnected] = useState(false);
   const { activate, account, chainId, library, active } = useWeb3React();
   const [showMetaWallet, setShowMetaWallet] = useState(true);
@@ -46,6 +50,8 @@ export default function Connect() {
       navigate("/Transfer");
     } catch (err) {
       console.log(err);
+      setErrorMsg("connection to wallet failed, please try again");
+      setShowError(true);
     }
   };
 
@@ -62,6 +68,8 @@ export default function Connect() {
       //heckIfOptIn(accountsSharedByUser[0].address);
     } catch (e) {
       console.log(e);
+      setErrorMsg("connection to wallet failed, please try again");
+      setShowError(true);
     }
     // handleCloseWallet();
     navigate("/Transfer");
@@ -95,6 +103,15 @@ export default function Connect() {
           />
         </div>
       </div>
+
+      {showError && (
+        <Error
+          errorMsg={errorMsg}
+          closeError={() => {
+            setShowError(false);
+          }}
+        />
+      )}
     </div>
   );
 }

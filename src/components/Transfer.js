@@ -7,7 +7,7 @@ import algorandIcon from "../img/Algorand.svg";
 import secureIcon from "../img/secure tx.svg";
 import swapIcon from "../img/swap  default.svg";
 import abi from "../utils/ABI.json";
-import AddressError from "./AddressError";
+import AddressError from "./errors/AddressError";
 // import ConnectWallet from "./ConnectWallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +22,9 @@ import {
   numberWithCommasTyping,
 } from "../utils/utilsFunc";
 import axios from "axios";
-import AmountError from "./AmountError";
-import WrongAddressError from "./WrongAddressError";
-import AmountZeroError from "./AmountZeroError";
+import AmountError from "./errors/AmountError";
+import WrongAddressError from "./errors/WrongAddressError";
+import AmountZeroError from "./errors/AmountZeroError";
 import {
   getAccountBalance,
   getFeeAlgoToBsc,

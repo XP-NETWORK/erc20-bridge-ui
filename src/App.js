@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { connectedAccount } from "./store/accountSlice";
 import Connect from "./components/Connect";
-import OptInPopup from "./components/OptInPopup";
+import OptInPopup from "./components/errors/OptInPopup";
 
 function App() {
   const urlParams = new URLSearchParams(window.location.search);

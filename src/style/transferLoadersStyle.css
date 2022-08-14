@@ -59,11 +59,16 @@
 /* Animation */
 .center {
   /* height: 5vh; */
-  transform: scale(0.7);
+  /* transform: scale(0.7); */
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
+.scale {
+  transform: scale(0.7);
+}
+
 .wave {
   width: 5px;
   height: 60px;

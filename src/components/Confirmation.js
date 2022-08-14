@@ -12,15 +12,18 @@ import { CHAINS_TYPE, MAX_CHAR_ADDRESS } from "../utils/consts";
 import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
 import { preTransfer, transfer } from "../erc20/erc20Utils";
 import { TransferError } from "xpjs-erc20";
-import OptInPopup from "./OptInPopup";
+import OptInPopup from "./errors/OptInPopup";
 import Loader from "./loaders/Loader";
 import ApprovalLoader from "./loaders/ApprovalLoader";
 import TransferLoader from "./loaders/TransferLoader";
 import { updateHash } from "../store/accountSlice";
+import Error from "./errors/Error";
 
 export default function Confirmation() {
   const [approveTransaction, setApproveTransaction] = useState(false);
   const [showOptIn, setShowOptIn] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [showApprovalLoader, setShowApprovalLoader] = useState(false);
   const [showTransferLoader, setShowTransferLoader] = useState(false);
 
@@ -86,6 +89,9 @@ export default function Confirmation() {
         if (!(e instanceof TransferError)) {
           // Some other error
           console.log(e);
+          setErrorMsg("tranasaction failed")
+          setShowError(true);
+          
         }
         const assetId = e.data;
         setAssetId(assetId);
@@ -253,6 +259,11 @@ export default function Confirmation() {
       {showTransferLoader && (
         <div className="backgroundLoaders">
           <TransferLoader />
+        </div>
+      )}
+      {showError && (
+        <div className="backgroundLoaders">
+          <Error errorMsg={errorMsg} closeError={()=>setShowError(false)}/>
         </div>
       )}
     </>
