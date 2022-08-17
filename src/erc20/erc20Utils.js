@@ -48,7 +48,7 @@ export const preTransfer = async (fromChain, amount, address) => {
     let provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = provider.getSigner();
   } else {
-    signer = await getMyAlgoConnect(address);
+    signer = await getMyAlgoSigner(address);
   }
 
   console.log("signer", signer);
@@ -93,7 +93,7 @@ export const transfer = async (
     let provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = provider.getSigner();
   } else {
-    signer = await getMyAlgoConnect(address);
+    signer = await getMyAlgoSigner(address);
   }
 
   let fee = await bridge.estimateFees(
@@ -116,6 +116,7 @@ export const transfer = async (
     destAddress,
     fee
   );
+  return transfer;
   console.log("Transfer -------->", transfer);
 };
 
@@ -153,6 +154,12 @@ export const getFeeAlgoToBsc = async () => {
 //   //console.log(fee);
 // };
 // hi();
+
+export const getMyAlgoSigner = async (address) => {
+  const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
+  const algo = await bridge.inner(ChainNonce.Algorand);
+  return algo.myAlgoSignerWrapper(myAlgoConnect, address);
+};
 
 export const getMyAlgoConnect = async (address) => {
   const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });

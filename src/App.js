@@ -36,7 +36,7 @@ function App() {
         <div className="flexColumn">
           <Routes>
             <Route path="/" element={<Connect />} />
-            <Route path="/" element={<OptInPopup />} />
+            {/* <Route path="/" element={<OptInPopup />} /> */}
             <Route
               path="/Transfer"
               element={<Transfer from={from} to={to} />}

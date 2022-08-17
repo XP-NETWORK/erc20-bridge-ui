@@ -82,7 +82,9 @@ export default function Report() {
                   Transaction ID
                 </label>
                 <div className="flexRow mobileColumn">
-                  <label className="confirmTitle">Destination hash</label>
+                  <label className="confirmTitle" style={{ width: "177px" }}>
+                    Destination hash
+                  </label>
                   <div className="greyBox greyBoxMobileConfirmation">
                     {transaction.toChain === CHAINS_TYPE.BSC ? (
                       <img src={bscIcon} />
@@ -107,7 +109,9 @@ export default function Report() {
               </div>
               <label className="line" />
               <div className="flexRow mobileColumn">
-                <label className="confirmTitle">Departure Hash</label>
+                <label className="confirmTitle" style={{ width: "190px" }}>
+                  Departure Hash
+                </label>
                 <div className="greyBox greyBoxMobileConfirmation">
                   {transaction.fromChain === CHAINS_TYPE.BSC ? (
                     <img src={bscIcon} />
@@ -116,7 +120,9 @@ export default function Report() {
                   )}
 
                   <label className="accountAddressLabel">
-                    {sourceHash ? sourceHash : ""}
+                    {sourceHash.slice(0, MAX_CHAR_ADDRESS) +
+                      "..." +
+                      sourceHash.slice(-4)}
                   </label>
                   <button>
                     <img
