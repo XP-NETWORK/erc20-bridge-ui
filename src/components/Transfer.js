@@ -75,6 +75,13 @@ export default function Transfer(props) {
     getFee();
   }, []);
 
+  useEffect(() => {
+    if (performance.navigation.type === 1) {
+      console.log("This page is reloaded");
+    } else {
+      console.log("This page is not reloaded");
+    }
+  });
   // console.log("feebsc", feeBSC);
   // console.log("feeAlgo", feeAlgo);
   // console.log("fee", calculatedFee);
@@ -313,22 +320,19 @@ export default function Transfer(props) {
               Transfer asset <br />
               between blockchains
             </h1>
-            <div className="Divgap">
-              <div className="flexRow">
-                <label className="amountLabel">Amount</label>
-                <label
-                  className="flexRow"
-                  style={{ width: "auto", gap: "5px" }}
-                >
-                  <img src={walletIcon} />
-                  <label className="xpnetAmount">
-                    {numberWithCommas(accountBalance)} {tokenSymbol}
-                  </label>
-                  <button className="maxLabel" onClick={handleMaxAmount}>
-                    MAX
-                  </button>
+            <div className="flexRow mtT50">
+              <label className="amountLabel">Amount</label>
+              <label className="flexRow" style={{ width: "auto", gap: "5px" }}>
+                <img src={walletIcon} />
+                <label className="xpnetAmount">
+                  {numberWithCommas(accountBalance)} {tokenSymbol}
                 </label>
-              </div>
+                <button className="maxLabel" onClick={handleMaxAmount}>
+                  MAX
+                </button>
+              </label>
+            </div>
+            <div className="Divgap">
               <div
                 className={
                   amountError ? "fieldBox fieldBoxError" : "fieldBox inputText"
@@ -398,7 +402,7 @@ export default function Transfer(props) {
                   onChange={handleAddressChanged}
                 />
               </div>
-              <div className="flexRow">
+              <div className="flexRow mtT32">
                 <label className="amountLabel">Fee:</label>
                 <label className="amountLabel flexRow">
                   {calculatedFee === 0
@@ -408,11 +412,14 @@ export default function Transfer(props) {
                 </label>
               </div>
             </div>
-            <button className="connectYourWalletBtn" onClick={handleBtnClick}>
+            <button
+              className="connectYourWalletBtn mt40"
+              onClick={handleBtnClick}
+            >
               {/* {isConnected ? "Next" : "Connect your wallet"} */}
               Next
             </button>
-            <div className="secureLabel">
+            <div className="secureLabel" style={{ marginTop: "28px" }}>
               <img src={secureIcon} />
               <label>Secure transaction</label>
             </div>

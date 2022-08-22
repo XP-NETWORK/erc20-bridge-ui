@@ -253,7 +253,8 @@ code {
   justify-items: center;
   padding: 0px;
   width: 465px;
-  height: auto;
+  height: 614px;
+
   background-color: #ffffff;
   border: 2px solid #ffffff;
   border-radius: 20px;
@@ -268,7 +269,8 @@ code {
   display: flex;
   flex-direction: column;
   justify-items: center;
-  gap: 20px;
+  /* gap: 20px; */
+  height: inherit;
 }
 
 .wraperConfirm {
@@ -447,6 +449,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 6px;
 }
 
 .blockchain {
@@ -730,7 +733,7 @@ button {
   cursor: pointer;
 }
 
-.errorBackground{
+.errorBackground {
   background: rgba(255, 255, 255, 0.7);
   -webkit-backdrop-filter: blur(64px);
   /* backdrop-filter: blur(64px); */
@@ -776,11 +779,23 @@ button {
   margin-right: 50px;
 }
 
+.mtT50 {
+  margin-top: 50px;
+}
+
+.mtT32 {
+  margin-top: 32px;
+}
+
+.mt40 {
+  margin-top: 40px;
+}
+
 @media only screen and (max-width: 700px) {
   .transferBox {
     width: 95vw;
     height: auto;
-    margin-top: 80px;
+    margin-top: 86px;
     padding: 10px 0px;
   }
 
@@ -788,7 +803,7 @@ button {
     width: 90vw;
     padding: 0px;
     /* padding-top: 40px; */
-    gap: 40px;
+    /* gap: 40px; */
   }
 
   .wraperConfirm {
@@ -821,6 +836,10 @@ button {
 
   .background {
     height: 130vh;
+  }
+
+  .Divgap {
+    gap: 14px;
   }
 
   .mobileColumn {
@@ -872,5 +891,14 @@ button {
     width: 80vw;
     align-self: center;
     height: 196.07px;
+  }
+  .mtT50 {
+    margin-top: 30px;
+  }
+  .mtT32 {
+    margin-top: 24px;
+  }
+  .mt40 {
+    margin-top: 34px;
   }
 }

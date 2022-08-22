@@ -37,8 +37,7 @@ export default function Confirmation() {
 
   console.log("addresss", address);
   useEffect(() => {
-    let valueInDollar =
-      (transaction.xpnetAmount - transaction.fee) * transaction.xpnetTokenPrice;
+    let valueInDollar = transaction.xpnetAmount * transaction.xpnetTokenPrice;
     setRecievingValueInDollar(valueInDollar);
   }, [transaction.xpnetAmount, transaction.fee, transaction.xpnetTokenPrice]);
 
@@ -89,9 +88,8 @@ export default function Confirmation() {
         if (!(e instanceof TransferError)) {
           // Some other error
           console.log(e);
-          setErrorMsg("tranasaction failed")
+          setErrorMsg("tranasaction failed");
           setShowError(true);
-          
         }
         const assetId = e.data;
         setAssetId(assetId);
@@ -263,7 +261,7 @@ export default function Confirmation() {
       )}
       {showError && (
         <div className="backgroundLoaders">
-          <Error errorMsg={errorMsg} closeError={()=>setShowError(false)}/>
+          <Error errorMsg={errorMsg} closeError={() => setShowError(false)} />
         </div>
       )}
     </>
