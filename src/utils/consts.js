@@ -7,3 +7,18 @@ export const CHAINS_TYPE = {
   BSC: "BSC",
   Algorand: "Algorand",
 };
+
+export const CHAINS_EXPLORERS = {
+  BSC: "https://bscscan.com/address/",
+  Algorand: "https://algoexplorer.io/address/",
+};
+
+export const CHAINS_EXPLORERS_TX = {
+  BSC: "https://bscscan.com/tx/",
+  Algorand: "https://algoexplorer.io/tx/",
+};
+
+export const CHAINS_TOKENS = {
+  BSC: "BNB",
+  Algorand: "Algos",
+};

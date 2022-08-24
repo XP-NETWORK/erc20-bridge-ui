@@ -17,6 +17,128 @@ body {
   pointer-events: none;
 }
 
+.wraperConfirm {
+  width: 400px;
+}
+
+.transferBox.transfer,
+.transferBox.confirm {
+  -webkit-animation: fadein 2s;
+  -moz-animation: fadein 2s;
+  -ms-animation: fadein 2s;
+  -o-animation: fadein 2s;
+  animation: fadein 2s;
+}
+
+.transferBoxTitle img {
+  cursor: pointer;
+}
+
+.errorPopup {
+  height: unset;
+}
+
+.errorPopup .closePopup {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.errorPopup h1 {
+  margin-top: 15px;
+}
+
+.errorPopup .closePopup:hover {
+  filter: brightness(111%);
+}
+
+.notifsBlock {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  width: 20%; /*media*/
+}
+
+.icontext,
+.xpnetAmount,
+.amountLabel {
+  filter: blur(0);
+  transition: filter 1.5s ease;
+}
+
+.feesContainer label {
+  min-width: 100px;
+  margin-left: auto;
+}
+
+.icontext.blury,
+.xpnetAmount.blury,
+.amountLabel.blury {
+  filter: blur(3px);
+}
+
+.notifsBlock .addressError {
+  width: 100%;
+  margin-top: 10px;
+  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 2s; /* Firefox < 16 */
+  -ms-animation: fadein 2s; /* Internet Explorer */
+  -o-animation: fadein 2s; /* Opera < 12.1 */
+  animation: fadein 2s;
+}
+
+.feesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.feesContainer span {
+  color: #62718a;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 19px;
+}
+
+.insufficient {
+  color: red;
+  position: relative;
+}
+
+span.errorNotif {
+  display: none;
+  color: red;
+  font-size: 12px;
+  position: absolute;
+  bottom: -17px;
+  right: 0;
+  font-style: italic;
+}
+
+.insufficient span.errorNotif {
+  display: inline;
+}
+
+.flexRow {
+  position: relative;
+}
+
+.swapBtn1 {
+  position: absolute;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -38,6 +160,22 @@ body {
   color: #61dafb;
 }
 
+a.accountAddressLabel {
+  text-decoration: none;
+}
+
+.connectWalletRow {
+  justify-content: flex-start;
+}
+
+.connectWalletLabel {
+  margin: 0 auto;
+}
+
+.navBtn {
+  padding-left: 0;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -45,4 +183,53 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Small devices (landscape phones, 576px and up)*/
+@media (max-width: 576px) {
+  html,
+  #root {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+  }
+
+  .flexColumn {
+    margin: auto 0;
+  }
+
+  .transferBox {
+    margin-top: 0;
+  }
+
+  .transferBox {
+  }
+
+  .App {
+    padding-left: 0;
+    padding-right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .wraperConfirm {
+    width: 90vw;
+  }
+
+  .errorPopup,
+  .wraperPopup.error {
+    width: 90%;
+  }
+}
+
+/* Medium devices (tablets, 768px and up)*/
+@media (max-width: 768px) {
+}
+
+/*Large devices (desktops, 992px and up)*/
+@media (max-width: 992px) {
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (max-width: 1200px) {
 }

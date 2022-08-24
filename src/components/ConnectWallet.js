@@ -44,14 +44,20 @@ export default function ConnectWallet(props) {
   }, [account]);
 
   useEffect(() => {
-    if (!ethereum) {
-      console.log("please install MetaMask");
-      setShowMetaWallet(false);
-    }
+    // if (!ethereum) {
+    //console.log("please install MetaMask");
+    //setShowMetaWallet(false);
+    // }
   }, []);
 
   const connectMetaMaskWalletHandler = async () => {
     try {
+      if (!window.ethereum && window.innerWidth <= 600) {
+        const link = `https://metamask.app.link/dapp/${window.location.host}/`;
+        window.open(link);
+        return;
+      }
+
       await activateAccount(InjectedMetaMask);
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -81,17 +87,6 @@ export default function ConnectWallet(props) {
 
   const activateAccount = async (accountToActivate) => {
     await activate(accountToActivate);
-  };
-
-  const switchNetwork = async () => {
-    try {
-      await library.provider.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x4" }],
-      });
-    } catch (switchError) {
-      console.log(switchError);
-    }
   };
 
   return (

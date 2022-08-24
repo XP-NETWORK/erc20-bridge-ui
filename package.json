@@ -21,10 +21,11 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.3",
     "react-toggle-button": "^2.2.0",
+    "socket.io-client": "^4.5.1",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.4",
     "web3-react": "^5.0.5",
-    "xpjs-erc20": "git+https://github.com/XP-NETWORK/xpjs-erc20#d30851e7e8200b270eac42a65590766c0b5af066"
+    "xpjs-erc20": "git+https://github.com/XP-NETWORK/xpjs-erc20#master-dist"
   },
   "scripts": {
     "start": "react-scripts start",

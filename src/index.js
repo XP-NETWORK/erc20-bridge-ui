@@ -9,6 +9,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 function getLibrary(provider) {
   return new Web3Provider(provider);
 }
@@ -17,7 +19,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Web3ReactProvider getLibrary={getLibrary}>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
     ,
   </Web3ReactProvider>

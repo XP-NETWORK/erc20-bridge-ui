@@ -8,19 +8,31 @@ import algorandIcon from "../img/Algorand.svg";
 import ToggleButton from "react-toggle-button";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { CHAINS_TYPE, MAX_CHAR_ADDRESS } from "../utils/consts";
+import {
+  CHAINS_TYPE,
+  MAX_CHAR_ADDRESS,
+  CHAINS_EXPLORERS,
+  CHAINS_TOKENS,
+} from "../utils/consts";
 import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
-import { preTransfer, transfer } from "../erc20/erc20Utils";
+import { preTransfer, transfer, getXpnetTokenValue } from "../erc20/erc20Utils";
 import { TransferError } from "xpjs-erc20";
 import OptInPopup from "./errors/OptInPopup";
 import Loader from "./loaders/Loader";
 import ApprovalLoader from "./loaders/ApprovalLoader";
 import TransferLoader from "./loaders/TransferLoader";
-import { updateHash } from "../store/accountSlice";
+import {
+  updateHash,
+  setError,
+  updateTransactionDetails,
+} from "../store/accountSlice";
 import Error from "./errors/Error";
+
+import { format } from "./helpers";
 
 export default function Confirmation() {
   const [approveTransaction, setApproveTransaction] = useState(false);
+  const [xpnetTokenPrice, setXpnetTokenPrice] = useState(0);
   const [showOptIn, setShowOptIn] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -35,24 +47,46 @@ export default function Confirmation() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("addresss", address);
   useEffect(() => {
-    let valueInDollar = transaction.xpnetAmount * transaction.xpnetTokenPrice;
+    getXpnetTokenValue().then((res) => setXpnetTokenPrice(res));
+    const interval = setInterval(
+      () => getXpnetTokenValue().then((res) => setXpnetTokenPrice(res)),
+      20000
+    );
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    let valueInDollar = transaction.xpnetAmount * xpnetTokenPrice;
     setRecievingValueInDollar(valueInDollar);
-  }, [transaction.xpnetAmount, transaction.fee, transaction.xpnetTokenPrice]);
+
+    dispatch(
+      updateTransactionDetails({
+        ...transaction,
+        recievingValueInDollar: valueInDollar,
+      })
+    );
+  }, [transaction.xpnetAmount, transaction.fee, xpnetTokenPrice]);
 
   const handleChangeApprove = async (e) => {
     let pretransfer;
     if (!approveTransaction) {
       setShowApprovalLoader(true);
-      pretransfer = await preTransfer(
-        transaction.fromChain,
-        transaction.xpnetAmount,
-        address
-      );
+      try {
+        pretransfer = await preTransfer(
+          transaction.fromChain,
+          transaction.xpnetAmount,
+          address
+        );
+
+        setApproveTransaction(true);
+      } catch (e) {
+        console.log(e, "approval");
+        setApproveTransaction(false);
+        dispatch(setError(e.message));
+      }
       setShowApprovalLoader(false);
     }
-    setApproveTransaction(!approveTransaction);
   };
 
   const editXpnetTokenAmount = () => {};
@@ -81,11 +115,13 @@ export default function Confirmation() {
           address
         );
         dispatch(updateHash(sourceHash));
-        setShowTransferLoader(false);
+
         navigate(`/BridgingReport`);
       } catch (e) {
+        console.log(e);
         setShowTransferLoader(false);
-        if (!(e instanceof TransferError)) {
+        dispatch(setError(e.message));
+        /*if (!(e instanceof TransferError)) {
           // Some other error
           console.log(e);
           setErrorMsg("tranasaction failed");
@@ -93,26 +129,23 @@ export default function Confirmation() {
         }
         const assetId = e.data;
         setAssetId(assetId);
-        setShowOptIn(true);
+        setShowOptIn(true);*/
       }
+
       //navigate("/BridgingReport");
     }
   };
+
   return (
     <>
       <div className="flexColumn">
-        <div className="transferBox">
+        <div className="transferBox confirm">
           <div className="wraperConfirm">
-            <div
-              className="connectWalletRow noMargin"
-              style={{ justifyContent: "flex-start" }}
-            >
-              <label className="connectWalletLabel selfCenter">
-                Bridging confirmation
-              </label>
-              <Link to="/" className="navBtn" style={{ margin: "0px" }}>
+            <div className="connectWalletRow noMargin">
+              <Link to="/Transfer" className="navBtn" style={{ margin: "0px" }}>
                 <img src={backIcon}></img>
               </Link>
+              <span className="connectWalletLabel">Bridging confirmation</span>
             </div>
 
             <div className="flexColumn" style={{ gap: "15px" }}>
@@ -120,12 +153,7 @@ export default function Confirmation() {
                 <div className="flexRow">
                   <label className="confirmTitle">Receiving</label>
                   <label className="recievingAmountLabel">
-                    {numberWithCommas(
-                      cutDigitAfterDot(
-                        transaction.xpnetAmount - transaction.fee,
-                        3
-                      )
-                    )}
+                    {format(transaction.xpnetAmount)}
                     <span className="confirmTextLabel">
                       &nbsp;{transaction.tokenSymbol}
                     </span>
@@ -139,7 +167,7 @@ export default function Confirmation() {
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Sending amount</label>
                 <div className="greyBox greyBoxMobileConfirmation">
-                  {numberWithCommas(transaction.xpnetAmount)}
+                  {format(transaction.xpnetAmount)}
                   <label style={{ color: "#62718A" }}>
                     {transaction.tokenSymbol}
                     {/* <img src={editIcon} className="editBtn" onClick={editXpnetTokenAmount}/> */}
@@ -149,11 +177,18 @@ export default function Confirmation() {
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Destination address</label>
                 <div className="greyBox greyBoxMobileConfirmation">
-                  <label className="accountAddressLabel">
+                  <a
+                    className="accountAddressLabel"
+                    href={`${CHAINS_EXPLORERS[transaction.toChain]}${
+                      transaction.destinationAddress
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {transaction.destinationAddress.slice(0, MAX_CHAR_ADDRESS) +
                       "..." +
                       transaction.destinationAddress.slice(-4)}
-                  </label>
+                  </a>
                   {/* <img src={copyIcon} /> */}
                 </div>
               </div>
@@ -186,11 +221,18 @@ export default function Confirmation() {
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Departure address</label>
                 <div className="greyBox greyBoxMobileConfirmation">
-                  <label className="accountAddressLabel">
+                  <a
+                    className="accountAddressLabel"
+                    target="_blank"
+                    rel="noreferrer"
+                    href={`${
+                      CHAINS_EXPLORERS[transaction.fromChain]
+                    }${address}`}
+                  >
                     {address.slice(0, MAX_CHAR_ADDRESS) +
                       "..." +
                       address.slice(-4)}
-                  </label>
+                  </a>
                   {/* <img src={copyIcon} /> */}
                 </div>
               </div>
@@ -199,7 +241,7 @@ export default function Confirmation() {
                 <label className="confirmTitle marginTop">Fee</label>
                 <label>
                   {cutDigitAfterDot(transaction.fee, 10)}{" "}
-                  {transaction.fromChain}
+                  {CHAINS_TOKENS[transaction.fromChain]}
                 </label>
               </div>
               <label className="line" />

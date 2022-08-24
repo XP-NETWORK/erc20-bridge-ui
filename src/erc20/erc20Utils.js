@@ -1,7 +1,11 @@
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { ASSET_ID, CHAINS_TYPE, CONTRACT_ADDRESS } from "../utils/consts";
+import { ASSET_ID, CHAINS_TYPE, CONTRACT_ADDRESS, BSC } from "../utils/consts";
+
+import abi from "../utils/ABI.json";
+import Web3 from "web3";
+import axios from "axios";
 
 const { default: algosdk } = require("algosdk");
 const {
@@ -57,13 +61,18 @@ export const preTransfer = async (fromChain, amount, address) => {
   let amountBigNumber = amBigNum.multipliedBy(divideBy).integerValue();
   console.log("amount bignumber", amountBigNumber);
   //console.log("bigNum", BigNumber.from(amount).toNumber());
-  let preTransfer = await bridge.preTransfer(
-    nonceSender,
-    signer,
-    fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
-    amountBigNumber
-  );
-  console.log("pretransfer", preTransfer);
+  try {
+    let preTransfer = await bridge.preTransfer(
+      nonceSender,
+      signer,
+      fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
+      amountBigNumber
+    );
+    console.log("pretransfer", preTransfer);
+  } catch (e) {
+    console.log(e, "e");
+    throw e;
+  }
 };
 
 //console.log("signer",signer);
@@ -116,8 +125,8 @@ export const transfer = async (
     destAddress,
     fee
   );
+  console.log(transfer, "transfer");
   return transfer;
-  console.log("Transfer -------->", transfer);
 };
 
 export const getFeeBscToAlgo = async () => {
@@ -126,9 +135,9 @@ export const getFeeBscToAlgo = async () => {
     CONTRACT_ADDRESS,
     ChainNonce.Algorand
   );
-  //console.log(fee);
+
   let divideBy = ChainInfo[ChainNonce.BSC].decimals;
-  //console.log("FeeBscToAlgo", fee.toNumber() / divideBy);
+
   return (fee.toNumber() / divideBy).toFixed(10);
 };
 
@@ -176,14 +185,65 @@ export const getMyAlgoConnect = async (address) => {
 };
 
 export const getAccountBalance = async (account, fromChain) => {
-  let nonceSender =
-    fromChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
-  let balance = await bridge.tokenBalance(
-    nonceSender,
-    fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
-    account
-  );
-  let divideBy = ChainInfo[nonceSender].decimals;
-  console.log("balance", balance / divideBy);
-  return balance / divideBy;
+  try {
+    let nonceSender =
+      fromChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
+
+    console.log(nonceSender, "nonceSender");
+
+    let balance = await bridge.tokenBalance(
+      nonceSender,
+      fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
+      account
+    );
+
+    let bal = await bridge.balance(
+      nonceSender,
+      "E3NP72RTQUN237I65SGBFTT77IUO3J4ZBZFV5NGMGVCMVJFDXGVMUJ4FUQ"
+    );
+
+    console.log(bal, " params");
+
+    let divideBy = ChainInfo[nonceSender].decimals;
+    console.log("balance", balance / divideBy);
+    return balance / divideBy;
+  } catch (e) {
+    throw e;
+  }
+};
+
+const Web3Client = new Web3(
+  new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
+);
+
+export const getBalance = async (acc) => {
+  const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
+
+  const result = await contract.methods.balanceOf(acc).call(); // 29803630997051883414242659
+  const tokenSymbol = await contract.methods.symbol().call();
+
+  const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
+  const xpnet = Math.floor(format);
+
+  return {
+    tokenSymbol,
+    xpnet,
+  };
+};
+
+export const getChainBalance = async (acc) => {
+  const x = await Web3Client.eth.getBalance(acc);
+  return Web3Client.utils.fromWei(x).slice(0, 7);
+};
+
+export const getXpnetTokenValue = async () => {
+  try {
+    const api = "https://api.xp.network/xpnet";
+    let xpnetToken = (await axios.get(api))?.data;
+    return xpnetToken?.price;
+  } catch (e) {
+    console.log(e, "getXpnetTokenValue");
+    return 0;
+  }
+  //setXpnetTokenPrice(xpnetToken.price);
 };

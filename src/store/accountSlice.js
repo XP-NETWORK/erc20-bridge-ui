@@ -1,19 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { CHAINS_TYPE } from "../utils/consts";
 
+export const iniTransactionDetails = {
+  tokenSymbol: "",
+  xpnetTokenPrice: 0,
+  xpnetAmount: 0,
+  destinationAddress: "",
+  fromChain: CHAINS_TYPE.BSC,
+  toChain: CHAINS_TYPE.Algorand,
+  fee: 0,
+  recievingValueInDollar: 0,
+};
+
 const initialState = {
   address: "",
   signature: "",
-  transactionDetails: {
-    tokenSymbol: "",
-    xpnetTokenPrice: 0,
-    xpnetAmount: 0,
-    destinationAddress: "",
-    fromChain: CHAINS_TYPE.BSC,
-    toChain: CHAINS_TYPE.Algorand,
-    fee: 0,
-    recievingValueInDollar: 0,
-  },
+  error: "",
+  transactionDetails: iniTransactionDetails,
   sourceHash: "",
 };
 
@@ -38,6 +41,9 @@ export const accountSlice = createSlice({
       console.log("source hash store", action.payload);
       state.sourceHash = action.payload;
     },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
   },
 });
 
@@ -47,6 +53,7 @@ export const {
   updateTransactionDetails,
   incrementByAmount,
   updateHash,
+  setError,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

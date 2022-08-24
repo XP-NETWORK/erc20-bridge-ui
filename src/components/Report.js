@@ -10,13 +10,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateTransactionDetails } from "../store/accountSlice";
 import { cutDigitAfterDot } from "../utils/utilsFunc";
-import { CHAINS_TYPE } from "../utils/consts";
+import {
+  CHAINS_TYPE,
+  CHAINS_EXPLORERS_TX,
+  CHAINS_TOKENS,
+} from "../utils/consts";
+
+import { format } from "./helpers";
 
 export default function Report() {
   const MAX_CHAR_ADDRESS = 15;
-  const transaction = useSelector((state) => state.account.transactionDetails);
-  const sourceHash = useSelector((state) => state.account.sourceHash);
-  console.log("source hasg report comp", sourceHash);
+  const transaction = useSelector((state) => ({
+    ...state.account.transactionDetails,
+    //toChain: CHAINS_TYPE.BSC,
+    //fromChain: CHAINS_TYPE.Algorand,
+  }));
+
+  const sourceHash =
+    "0x009611f3f2735beb72b70a70a44d0c6cac80796e2abcc3fd14bc2f2941d9a28a"; // useSelector((state) => state.account.sourceHash);
+
+  const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
 
   const address = useSelector((state) => state.account.address);
   const navigate = useNavigate();
@@ -42,9 +55,6 @@ export default function Report() {
         <div className="transferBox">
           <div className="wraperConfirm">
             <div className="connectWalletRow noMargin">
-              <label className="connectWalletLabel selfCenter">
-                Bridging Report
-              </label>
               <button
                 className="navBtn"
                 style={{ margin: "0px" }}
@@ -52,6 +62,7 @@ export default function Report() {
               >
                 <img src={cancelBtn} />
               </button>
+              <label className="connectWalletLabel">Bridging Report</label>
             </div>
 
             <div className="flexColumn center" style={{ gap: "2px" }}>
@@ -64,7 +75,7 @@ export default function Report() {
                 className="recievingAmountLabel"
                 style={{ alignSelf: "center" }}
               >
-                {cutDigitAfterDot(transaction.xpnetAmount - transaction.fee, 3)}
+                {cutDigitAfterDot(transaction.xpnetAmount, 3)}
                 <span className="confirmTextLabel">
                   &nbsp;{transaction.tokenSymbol}
                 </span>
@@ -77,34 +88,39 @@ export default function Report() {
               </label>
             </div>
             <div className="flexColumn">
-              <div className="mobileColumn">
-                <label className="confirmTitle mobileOnly">
+              {/*<label className="confirmTitle mobileOnly">
                   Transaction ID
+              </label>*/}
+              <div className="flexRow mobileColumn">
+                <label className="confirmTitle" style={{ width: "177px" }}>
+                  Destination hash
                 </label>
-                <div className="flexRow mobileColumn">
-                  <label className="confirmTitle" style={{ width: "177px" }}>
-                    Destination hash
-                  </label>
-                  <div className="greyBox greyBoxMobileConfirmation">
-                    {transaction.toChain === CHAINS_TYPE.BSC ? (
-                      <img src={bscIcon} />
-                    ) : (
-                      <img src={algorandIcon} />
-                    )}
+                <div className="greyBox greyBoxMobileConfirmation">
+                  {transaction.toChain === CHAINS_TYPE.BSC ? (
+                    <img src={bscIcon} />
+                  ) : (
+                    <img src={algorandIcon} />
+                  )}
 
-                    {/* <label className="accountAddressLabel">
-                    {address.slice(0, MAX_CHAR_ADDRESS) +
-                      "..." +
-                      address.slice(-4)}
-                  </label> */}
-                    <button>
-                      <img
-                        src={copyIcon}
-                        className="copyImgIcon"
-                        onClick={() => navigator.clipboard.writeText(address)}
-                      />
-                    </button>
-                  </div>
+                  {
+                    <a
+                      className="accountAddressLabel"
+                      href={`${CHAINS_EXPLORERS_TX}${desthash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {desthash.slice(0, MAX_CHAR_ADDRESS) +
+                        "..." +
+                        desthash.slice(-4)}
+                    </a>
+                  }
+                  <button>
+                    <img
+                      src={copyIcon}
+                      className="copyImgIcon"
+                      onClick={() => navigator.clipboard.writeText(address)}
+                    />
+                  </button>
                 </div>
               </div>
               <label className="line" />
@@ -119,11 +135,18 @@ export default function Report() {
                     <img src={algorandIcon} />
                   )}
 
-                  <label className="accountAddressLabel">
+                  <a
+                    className="accountAddressLabel"
+                    href={`${
+                      CHAINS_EXPLORERS_TX[transaction.fromChain]
+                    }${sourceHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {sourceHash.slice(0, MAX_CHAR_ADDRESS) +
                       "..." +
                       sourceHash.slice(-4)}
-                  </label>
+                  </a>
                   <button>
                     <img
                       src={copyIcon}
@@ -138,7 +161,7 @@ export default function Report() {
                 <label className="confirmTitle">Fee</label>
                 <label>
                   {cutDigitAfterDot(transaction.fee, 10)}{" "}
-                  {transaction.fromChain}
+                  {CHAINS_TOKENS[transaction.fromChain]}
                 </label>
               </div>
             </div>

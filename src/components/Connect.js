@@ -3,13 +3,18 @@ import metaIcon from "../img/wallets/metamask.svg";
 import MyAlgoIcon from "../img/myalgo-logo.svg";
 import { useDispatch } from "react-redux";
 import { useWeb3React } from "@web3-react/core";
-import { connectedAccount } from "../store/accountSlice";
+import {
+  connectedAccount,
+  updateTransactionDetails,
+  iniTransactionDetails,
+} from "../store/accountSlice";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { InjectedMetaMask } from "../utils/connectors";
 import { useNavigate } from "react-router-dom";
 import { checkIfOptIn, getFees } from "../erc20/erc20Utils";
 import OptInPopup from "./errors/OptInPopup";
 import Error from "./errors/Error";
+import { CHAINS_TYPE } from "../utils/consts";
 
 export default function Connect() {
   const { ethereum } = window;
@@ -41,6 +46,12 @@ export default function Connect() {
 
   const connectMetaMaskWalletHandler = async () => {
     try {
+      if (!window.ethereum && window.innerWidth <= 600) {
+        const link = `https://metamask.app.link/dapp/${window.location.host}/`;
+        window.open(link);
+        return;
+      }
+
       await activateAccount(InjectedMetaMask);
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -64,7 +75,19 @@ export default function Connect() {
       };
       const accountsSharedByUser = await myAlgoConnect.connect(settings);
       console.log(accountsSharedByUser[0], "algo");
-      dispatch(connectedAccount(accountsSharedByUser[0].address));
+
+      if (accountsSharedByUser[0]?.address) {
+        dispatch(connectedAccount(accountsSharedByUser[0].address));
+        dispatch(
+          updateTransactionDetails({
+            ...iniTransactionDetails,
+            fromChain: CHAINS_TYPE.Algorand,
+            toChain: CHAINS_TYPE.BSC,
+          })
+        );
+        navigate("/Transfer");
+      }
+
       //heckIfOptIn(accountsSharedByUser[0].address);
     } catch (e) {
       console.log(e);
@@ -72,7 +95,6 @@ export default function Connect() {
       setShowError(true);
     }
     // handleCloseWallet();
-    navigate("/Transfer");
   };
 
   // const handleCloseWallet = () => {
