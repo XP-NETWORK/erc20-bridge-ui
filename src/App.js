@@ -13,9 +13,13 @@ import { connectedAccount } from "./store/accountSlice";
 import Connect from "./components/Connect";
 import { io } from "socket.io-client";
 import ErrorPopup from "./components/errors/ErrorPopup";
-
+import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
+
+import { Algodv2, Indexer } from "algosdk";
+
+import { Bridge__factory } from "web3-erc20-contracts-types";
 
 function App() {
   const [from, setFrom] = useState();
@@ -32,6 +36,45 @@ function App() {
   console.log(state, "state");
 
   useEffect(() => {
+    setTimeout(async () => {
+      /*let provider = new ethers.providers.Web3Provider(window.ethereum);
+      const res = await provider.waitForTransaction(
+        "0x009611f3f2735beb72b70a70a44d0c6cac80796e2abcc3fd14bc2f2941d9a28a"
+      );
+
+      const contract = Bridge__factory.connect(
+        "0x91105e661C500e6651f04CF76787297e534b97a5",
+        provider
+      );
+
+      let actionId 
+
+      for (const log of res.logs) {
+        if (log.address != "0x91105e661C500e6651f04CF76787297e534b97a5")
+          continue;
+
+        const parsed = contract.interface.parseLog(log);
+
+        actionId = parsed?.args?.actionId;
+      }*/
+      /* const x = new Indexer(
+        {
+          "x-api-key": "jNExV5Bud64raKqGiUBBQ2smiLuphGB48PdPqh3N",
+        },
+        "https://algoindexer.algoexplorerapi.io",
+        ""
+      );
+      const v = await x
+        .lookupAccountTransactions(
+          "NZQXP6BDGJ2HTLPNDRDJK74Z7UR26RKNYHOX3YQLBFEOTLIRK3HGRJ4TKU"
+        )
+        .do();
+
+      console.log(v);*/
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
     //navigate("/BridgingReport");
     navigate("/");
     const urlParams = new URLSearchParams(window.location.search);
@@ -42,19 +85,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const executedSocket = io("https://transaction-socket.xp.network/");
-    const algoSocket = io("https://notifier.xp.network/");
+    /*const algoSocket = io("https://token-notifier.xp.network");
 
     setTimeout(() => {
       console.log(algoSocket, "algoSocket");
-      algoSocket.on("algorand:bridge_tx", async (hash) => {
-        console.log(hash, "hash in socket");
+      algoSocket.on("algorand:bridge_tx", async (...args) => {
+        console.log(args, "hash in socket");
       });
 
-      executedSocket.on("tx_executed_event", async (...args) => {
-        console.log(args, "transactiob socket");
+      algoSocket.on("web3:bridge_tx", async (...args) => {
+        console.log(args, "hash in socket");
       });
-    }, 2000);
+    }, 2000);*/
   }, []);
 
   useEffect(() => {

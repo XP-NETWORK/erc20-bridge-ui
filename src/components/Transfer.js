@@ -1,32 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ethers } from "ethers";
+
 import walletIcon from "../img/wallet.svg";
 import xpnetIcon from "../img/XPNET.svg";
 import bscIcon from "../img/BSC.svg";
 import algorandIcon from "../img/Algorand.svg";
 import secureIcon from "../img/secure tx.svg";
 import swapIcon from "../img/swap  default.svg";
-import abi from "../utils/ABI.json";
+
 import AddressError from "./errors/AddressError";
 // import ConnectWallet from "./ConnectWallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setError, updateTransactionDetails } from "../store/accountSlice";
+import {
+  setError,
+  updateTransactionDetails,
+  connectedAccount,
+} from "../store/accountSlice";
 import Web3 from "web3";
-import { BSC, CHAINS_TYPE, CONTRACT_ADDRESS } from "../utils/consts";
+import { BSC, CHAINS_TYPE } from "../utils/consts";
 import {
   cutDigitAfterDot,
-  getFeeValue,
   getNumberType,
   numberWithCommas,
-  numberWithCommasTyping,
 } from "../utils/utilsFunc";
-import axios from "axios";
+
 import AmountError from "./errors/AmountError";
 import WrongAddressError from "./errors/WrongAddressError";
 import AmountZeroError from "./errors/AmountZeroError";
 import {
-  getAccountBalance,
+  getAlgoData,
   getFeeAlgoToBsc,
   getFeeBscToAlgo,
   getBalance,
@@ -34,7 +36,11 @@ import {
 } from "../erc20/erc20Utils";
 import { useWeb3React } from "@web3-react/core";
 
+import { connectAlgo, connectMM } from "./Connect";
+import { InjectedMetaMask } from "../utils/connectors";
+
 import { verifyAddress } from "./helpers";
+import { Loader } from "./loaders/Loader";
 
 export default function Transfer(props) {
   const web3 = new Web3();
@@ -61,10 +67,10 @@ export default function Transfer(props) {
   const [blury, setBlury] = useState(true);
   const [FeeBlury, setFeeBlury] = useState(true);
   const [userBalance, setUserBalance] = useState(0);
-  const { active } = useWeb3React();
+  const { active, deactivate, activate } = useWeb3React();
 
-  const [feeBSC, setfeeBSC] = useState("0.00000");
-  const [feeAlgo, setFeeAlgo] = useState();
+  const [totalFee, setFee] = useState("0.00000");
+  //const [feeAlgo, setFeeAlgo] = useState();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -83,7 +89,6 @@ export default function Transfer(props) {
   const getUserbalance = (currentAccount) =>
     getChainBalance(currentAccount)
       .then((balance) => {
-        console.log(currentAccount);
         bal.current !== balance && setUserBalance(balance);
         bal.current = balance;
       })
@@ -94,48 +99,31 @@ export default function Transfer(props) {
 
   const getFees = async () => {
     try {
-      let feeBsc = await getFeeBscToAlgo();
-      let feealgo = await getFeeAlgoToBsc();
-      console.log(feeBsc);
-      fee.current !== feeBsc && setfeeBSC(feeBsc);
-      fee.current = feeBsc;
-      setFeeAlgo(feealgo);
-      setFeeBlury(false);
-    } catch (e) {}
+      if (currentAccount) {
+        if (active) {
+          let feeBsc = await getFeeBscToAlgo();
+          fee.current !== feeBsc && setFee(feeBsc);
+          fee.current = feeBsc;
+        } else {
+          let feealgo = await getFeeAlgoToBsc();
+          fee.current !== feealgo && setFee(feealgo);
+          fee.current = feealgo;
+        }
+
+        setFeeBlury(false);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
-    setBlury(true);
-    setFeeBlury(true);
-
-    getChainBalance(currentAccount).then((balance) => {
-      setUserBalance(balance);
-      bal.current = balance;
-    });
-
     getFees();
 
     const interval = setInterval(() => getFees(), period);
 
     return () => clearInterval(interval);
-  }, []);
-
-  /*if (props.from?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
-    setFromChain(CHAINS_TYPE.Algorand);
-    setToChain(CHAINS_TYPE.BSC);
-  }
-  if (props.to?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
-    setFromChain(CHAINS_TYPE.Algorand);
-    setToChain(CHAINS_TYPE.BSC);
-  }
-  if (props.from?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
-    setFromChain(CHAINS_TYPE.BSC);
-    setToChain(CHAINS_TYPE.Algorand);
-  }
-  if (props.to?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
-    setFromChain(CHAINS_TYPE.BSC);
-    setToChain(CHAINS_TYPE.Algorand);
-  }*/
+  }, [currentAccount]);
 
   useEffect(() => {
     // console.log(xpnetTokenAmount + calculatedFee, "total");
@@ -152,11 +140,17 @@ export default function Transfer(props) {
   }, [xpnetTokenAmount, accountBalance]);
 
   useEffect(() => {
-    !isNaN(feeBSC) && setCalculatedFee(feeBSC);
-  }, [feeBSC]);
+    console.log(totalFee, "totalFee");
+    !isNaN(totalFee) && setCalculatedFee(totalFee);
+  }, [totalFee]);
 
   useEffect(() => {
-    if (calculatedFee > userBalance) {
+    if (
+      calculatedFee &&
+      userBalance &&
+      Number(calculatedFee) > Number(userBalance)
+    ) {
+      console.log(calculatedFee, userBalance, "da");
       setInsufficient(true);
     } else {
       setInsufficient(false);
@@ -164,59 +158,83 @@ export default function Transfer(props) {
   }, [calculatedFee, userBalance]);
 
   useEffect(() => {
-    if (active) {
-      console.log("yes metamask");
-
-      getBalance(currentAccount).then(({ tokenSymbol, xpnet }) => {
-        setTokenSymbol(tokenSymbol);
-        setAccountBalance(xpnet);
-        setBlury(false);
-      });
-    } else {
-      try {
-        async function x() {
-          let balance = await getAccountBalance(
-            currentAccount,
-            CHAINS_TYPE.Algorand
-          );
-          console.log("not metamask");
-          setAccountBalance(balance);
+    if (currentAccount) {
+      let interval;
+      setBlury(true);
+      setFeeBlury(true);
+      if (active) {
+        console.log("arrar");
+        getBalance(currentAccount).then(({ tokenSymbol, xpnet }) => {
+          setTokenSymbol(tokenSymbol);
+          setAccountBalance(xpnet);
           setBlury(false);
-        }
-        x().catch((e) => {
-          throw e;
         });
-      } catch (e) {
-        dispatch(setError(e.message));
-      }
-    }
 
-    getUserbalance(currentAccount);
-    const interval = setInterval(() => getUserbalance(currentAccount), period);
-    return () => clearInterval(interval);
+        getUserbalance(currentAccount);
+        interval = setInterval(() => getUserbalance(currentAccount), period);
+      } else {
+        console.log("gekko");
+        try {
+          console.log(currentAccount, "currentAccount");
+          getAlgoData(currentAccount, CHAINS_TYPE.Algorand)
+            .then(({ tokenBalance, symbol, balance }) => {
+              setTokenSymbol(symbol);
+              setAccountBalance(tokenBalance);
+              setUserBalance(balance);
+              setBlury(false);
+            })
+            .catch((e) => console.log(e, " in use effect"));
+
+          interval = setInterval(() => {
+            getAlgoData(currentAccount, CHAINS_TYPE.Algorand)
+              .then(({ tokenBalance, symbol, balance }) => {
+                setTokenSymbol(symbol);
+                setAccountBalance(tokenBalance);
+                setUserBalance(balance);
+                setBlury(false);
+              })
+              .catch((e) => console.log(e, " in use effect"));
+          }, period);
+        } catch (e) {
+          dispatch(setError(e.message));
+        }
+      }
+
+      return () => clearInterval(interval);
+    }
   }, [currentAccount]);
 
-  const swapChains = () => {
-    /*if (fromChain === CHAINS_TYPE.BSC) {
-      setCalculatedFee(feeAlgo);
-    } else {
-      setCalculatedFee(feeBSC);
-    }*/
-    console.log("swapChains");
+  const swapChains = async () => {
+    let newAcc;
+    try {
+      if (fromChain === CHAINS_TYPE.BSC) {
+        const accountsSharedByUser = await connectAlgo();
 
-    dispatch(
-      updateTransactionDetails({
-        ...transactionDetails,
-        fromChain: toChain,
-        toChain: fromChain,
-      })
-    );
+        if (accountsSharedByUser) {
+          deactivate();
+          setTimeout(
+            () => dispatch(connectedAccount(accountsSharedByUser[0].address)),
+            500
+          );
+        }
+      } else {
+        await connectMM(activate, InjectedMetaMask);
+        console.log(InjectedMetaMask, "InjectedMetaMask");
+        //dispatch(connectedAccount(InjectedMetaMask));
+      }
 
-    //isAddressSuitableDestChain();
+      dispatch(
+        updateTransactionDetails({
+          ...transactionDetails,
+          fromChain: toChain,
+          toChain: fromChain,
+        })
+      );
+    } catch (e) {}
   };
 
   const handleMaxAmount = () => {
-    setXpnetTokenAmount(getNumberType(accountBalance));
+    setXpnetTokenAmount(parseFloat(accountBalance));
   };
 
   useEffect(() => {
@@ -291,9 +309,11 @@ export default function Transfer(props) {
   };
 
   useEffect(() => {
-    if (destinationAddress !== "") {
+    if (destinationAddress) {
       if (!verifyAddress(destinationAddress, toChain)) {
         setWrongAddressError(true);
+      } else {
+        setWrongAddressError(false);
       }
     }
   }, [destinationAddress, fromChain, toChain]);
@@ -419,17 +439,23 @@ export default function Transfer(props) {
                 <label className="amountLabel">Fee:</label>
                 <div className="feesContainer">
                   <span>Balance: {userBalance}</span>
-                  <label
-                    className={`amountLabel flexRow ${
-                      FeeBlury ? "blury" : ""
-                    } ${insufficient ? "insufficient" : ""}`}
-                  >
-                    <span className="errorNotif">Insufficient funds</span>
-                    {calculatedFee === 0
-                      ? 0
-                      : cutDigitAfterDot(calculatedFee, 10)}{" "}
-                    {fromChain === CHAINS_TYPE.BSC ? "BNB" : "Algo"}
-                  </label>
+                  <div className="withLoaderContainer">
+                    {!FeeBlury ? (
+                      <label
+                        className={`amountLabel flexRow ${
+                          FeeBlury ? "blury" : ""
+                        } ${insufficient ? "insufficient" : ""}`}
+                      >
+                        <span className="errorNotif">Insufficient funds</span>
+                        {calculatedFee === 0
+                          ? 0
+                          : cutDigitAfterDot(calculatedFee, 10)}{" "}
+                        {fromChain === CHAINS_TYPE.BSC ? "BNB" : "Algo"}
+                      </label>
+                    ) : (
+                      <Loader />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -440,7 +466,7 @@ export default function Transfer(props) {
               {/* {isConnected ? "Next" : "Connect your wallet"} */}
               Next
             </button>
-            <div className="secureLabel" style={{ marginTop: "28px" }}>
+            <div className="secureLabel" style={{ marginTop: "22px" }}>
               <img src={secureIcon} />
               <label>Secure transaction</label>
             </div>

@@ -25,7 +25,8 @@
     "web-vitals": "^2.1.4",
     "web3": "^1.7.4",
     "web3-react": "^5.0.5",
-    "xpjs-erc20": "git+https://github.com/XP-NETWORK/xpjs-erc20#master-dist"
+    "xpjs-erc20": "git+https://github.com/XP-NETWORK/xpjs-erc20#master-dist",
+    "web3-erc20-contracts-types": "git+https://github.com/XP-NETWORK/web3-erc20-contracts-types#f85932dc67e9b05d7a0742dc76914ac0d2376e2b"
   },
   "scripts": {
     "start": "react-scripts start",

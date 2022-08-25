@@ -22,7 +22,8 @@ body {
 }
 
 .transferBox.transfer,
-.transferBox.confirm {
+.transferBox.confirm,
+.transferBox.report {
   -webkit-animation: fadein 2s;
   -moz-animation: fadein 2s;
   -ms-animation: fadein 2s;
@@ -67,8 +68,12 @@ body {
   transition: filter 1.5s ease;
 }
 
-.feesContainer label {
+.withLoaderContainer {
   min-width: 100px;
+  height: 30px;
+}
+
+.feesContainer label {
   margin-left: auto;
 }
 
@@ -130,6 +135,67 @@ span.errorNotif {
   transform: translateX(50%);
 }
 
+.transferBox {
+  padding-bottom: 15px;
+}
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  transform: scale(0.4);
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 13px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgb(131, 129, 129);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
 @keyframes fadein {
   from {
     opacity: 0;
@@ -137,6 +203,16 @@ span.errorNotif {
   to {
     opacity: 1;
   }
+}
+
+.btnWallet {
+  box-shadow: none;
+  transition: 0.5s ease;
+  margin: 4px 0;
+}
+
+.btnWallet:hover {
+  box-shadow: rgb(100 100 111 / 20%) 2px 7px 21px 2px;
 }
 
 @media (prefers-reduced-motion: no-preference) {

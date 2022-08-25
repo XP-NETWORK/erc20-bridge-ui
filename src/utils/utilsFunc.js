@@ -22,5 +22,8 @@ export function getNumberType(x) {
 }
 
 export function cutDigitAfterDot(numberToFixed, digitNumber) {
-  return parseFloat(numberToFixed).toFixed(digitNumber);
+  return parseFloat(numberToFixed)
+    .toFixed(digitNumber)
+    .toString()
+    .replace(/^([\d,]+)$|^([\d,]+)\.0*$|^([\d,]+\.[0-9]*?)0*$/, "$1$2$3");
 }

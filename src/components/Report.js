@@ -26,8 +26,7 @@ export default function Report() {
     //fromChain: CHAINS_TYPE.Algorand,
   }));
 
-  const sourceHash =
-    "0x009611f3f2735beb72b70a70a44d0c6cac80796e2abcc3fd14bc2f2941d9a28a"; // useSelector((state) => state.account.sourceHash);
+  const sourceHash = useSelector((state) => state.account.sourceHash);
 
   const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
 
@@ -52,7 +51,7 @@ export default function Report() {
   return (
     <>
       <div className="flexColumn">
-        <div className="transferBox">
+        <div className="transferBox report">
           <div className="wraperConfirm">
             <div className="connectWalletRow noMargin">
               <button

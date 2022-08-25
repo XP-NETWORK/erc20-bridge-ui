@@ -7,6 +7,10 @@ import abi from "../utils/ABI.json";
 import Web3 from "web3";
 import axios from "axios";
 
+import TransactionWratcher from "../service/transactions";
+
+const tw = TransactionWratcher();
+
 const { default: algosdk } = require("algosdk");
 const {
   erc20MultiBridge,
@@ -126,6 +130,13 @@ export const transfer = async (
     fee
   );
   console.log(transfer, "transfer");
+
+  /*const interval = setInterval(() => {
+    tw.getAlgoPending(destAddress);
+  }, 1000);
+
+  setTimeout(() => clearInterval(interval), 2 * 60000);*/
+
   return transfer;
 };
 
@@ -148,7 +159,7 @@ export const getFeeAlgoToBsc = async () => {
     ChainNonce.BSC
   );
   let divideBy = ChainInfo[ChainNonce.Algorand].decimals;
-  //console.log("FeeAlgoToBsc", fee.toNumber() / divideBy);
+  console.log("FeeAlgoToBsc", fee);
   return fee.toNumber() / divideBy;
 };
 
@@ -184,29 +195,43 @@ export const getMyAlgoConnect = async (address) => {
   return algo.myAlgoSignerWrapper(myAlgoConnect, address);
 };
 
-export const getAccountBalance = async (account, fromChain) => {
+let algoSymbol = "";
+
+export const getAlgoData = async (account, fromChain) => {
   try {
-    let nonceSender =
-      fromChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
+    let nonceSender = ChainNonce.Algorand;
 
-    console.log(nonceSender, "nonceSender");
+    const [tokenBalance, symbol, balance] = await Promise.all([
+      (async () => {
+        return await bridge.tokenBalance(
+          nonceSender,
+          fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
+          account
+        );
+      })(),
+      (async () => {
+        if (algoSymbol) return algoSymbol;
+        const res = await bridge.tokenParams(nonceSender, ASSET_ID);
 
-    let balance = await bridge.tokenBalance(
-      nonceSender,
-      fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
-      account
-    );
+        algoSymbol = res.name;
+        return res.name;
+      })(),
 
-    let bal = await bridge.balance(
-      nonceSender,
-      "E3NP72RTQUN237I65SGBFTT77IUO3J4ZBZFV5NGMGVCMVJFDXGVMUJ4FUQ"
-    );
+      (async () => {
+        const res = await bridge.balance(nonceSender, account);
 
-    console.log(bal, " params");
+        return res.dividedBy(1e6).toString();
+      })(),
+    ]);
 
     let divideBy = ChainInfo[nonceSender].decimals;
-    console.log("balance", balance / divideBy);
-    return balance / divideBy;
+    console.log("token Balance", tokenBalance / divideBy);
+
+    return {
+      tokenBalance: tokenBalance / divideBy,
+      symbol: algoSymbol,
+      balance,
+    };
   } catch (e) {
     throw e;
   }
@@ -223,7 +248,7 @@ export const getBalance = async (acc) => {
   const tokenSymbol = await contract.methods.symbol().call();
 
   const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
-  const xpnet = Math.floor(format);
+  const xpnet = Number(format).toFixed(1);
 
   return {
     tokenSymbol,

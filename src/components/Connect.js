@@ -16,6 +16,38 @@ import OptInPopup from "./errors/OptInPopup";
 import Error from "./errors/Error";
 import { CHAINS_TYPE } from "../utils/consts";
 
+export const connectAlgo = async () => {
+  const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
+
+  const settings = {
+    shouldSelectOneAccount: false,
+    openManager: true,
+  };
+  const accountsSharedByUser = await myAlgoConnect
+    .connect(settings)
+    .catch((e) => {
+      throw e;
+    });
+
+  return accountsSharedByUser;
+};
+
+export const connectMM = async (activate, acc) => {
+  if (!window.ethereum) {
+    alert("Install metaMask");
+    return;
+  }
+  try {
+    await activate(acc);
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: "0x38" }], // chainId must be in hexadecimal numbers
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
 export default function Connect() {
   const { ethereum } = window;
   const [showError, setShowError] = useState(false);
@@ -52,11 +84,8 @@ export default function Connect() {
         return;
       }
 
-      await activateAccount(InjectedMetaMask);
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x38" }], // chainId must be in hexadecimal numbers
-      });
+      await connectMM(activate, InjectedMetaMask);
+
       // handleCloseWallet();
       navigate("/Transfer");
     } catch (err) {
@@ -67,14 +96,9 @@ export default function Connect() {
   };
 
   const connectMyAlgoHandler = async () => {
-    const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
+    //const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
     try {
-      const settings = {
-        shouldSelectOneAccount: false,
-        openManager: true,
-      };
-      const accountsSharedByUser = await myAlgoConnect.connect(settings);
-      console.log(accountsSharedByUser[0], "algo");
+      const accountsSharedByUser = await connectAlgo();
 
       if (accountsSharedByUser[0]?.address) {
         dispatch(connectedAccount(accountsSharedByUser[0].address));

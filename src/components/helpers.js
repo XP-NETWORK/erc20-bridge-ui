@@ -35,3 +35,22 @@ export const verifyAddress = (address, chain) => {
       return false;
   }
 };
+
+/****
+ * 
+ *   /*if (props.from?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
+    setFromChain(CHAINS_TYPE.Algorand);
+    setToChain(CHAINS_TYPE.BSC);
+  }
+  if (props.to?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
+    setFromChain(CHAINS_TYPE.Algorand);
+    setToChain(CHAINS_TYPE.BSC);
+  }
+  if (props.from?.toUpperCase() === CHAINS_TYPE.BSC.toUpperCase()) {
+    setFromChain(CHAINS_TYPE.BSC);
+    setToChain(CHAINS_TYPE.Algorand);
+  }
+  if (props.to?.toUpperCase() === CHAINS_TYPE.Algorand.toUpperCase()) {
+    setFromChain(CHAINS_TYPE.BSC);
+    setToChain(CHAINS_TYPE.Algorand);
+  }*/
