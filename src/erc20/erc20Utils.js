@@ -1,7 +1,13 @@
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { ASSET_ID, CHAINS_TYPE, CONTRACT_ADDRESS, BSC } from "../utils/consts";
+import {
+  ASSET_ID,
+  CHAINS_TYPE,
+  CONTRACT_ADDRESS,
+  BSC,
+  APPLICATION_ID,
+} from "../utils/consts";
 
 import abi from "../utils/ABI.json";
 import Web3 from "web3";
@@ -35,7 +41,7 @@ export const bridge = erc20MultiBridge(
         "https://mainnet-idx.algonode.cloud",
         443
       ),
-      bridgeId: 832979940,
+      bridgeId: Number(APPLICATION_ID),
     },
   },
   {

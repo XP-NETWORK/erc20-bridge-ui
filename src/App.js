@@ -17,9 +17,9 @@ import { ethers } from "ethers";
 import { useLocation, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
-import { Algodv2, Indexer } from "algosdk";
+import transactions from "./service/transactions";
 
-import { Bridge__factory } from "web3-erc20-contracts-types";
+const tw = transactions();
 
 function App() {
   const [from, setFrom] = useState();
@@ -33,30 +33,21 @@ function App() {
 
   const state = useSelector((state) => state);
 
-  console.log(state, "state");
-
   useEffect(() => {
     setTimeout(async () => {
-      /*let provider = new ethers.providers.Web3Provider(window.ethereum);
-      const res = await provider.waitForTransaction(
-        "0x009611f3f2735beb72b70a70a44d0c6cac80796e2abcc3fd14bc2f2941d9a28a"
+      /*const id = await tw.getEvmActionId(
+        "0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0"
       );
+      tw.decode("AAAAAAAAB2Y=");
+      console.log(id);*/
+      return;
+      const tx = await tw
+        .findAlgoTrx(
+          "0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0"
+        )
+        .catch((e) => "");
+      console.log(tx);
 
-      const contract = Bridge__factory.connect(
-        "0x91105e661C500e6651f04CF76787297e534b97a5",
-        provider
-      );
-
-      let actionId 
-
-      for (const log of res.logs) {
-        if (log.address != "0x91105e661C500e6651f04CF76787297e534b97a5")
-          continue;
-
-        const parsed = contract.interface.parseLog(log);
-
-        actionId = parsed?.args?.actionId;
-      }*/
       /* const x = new Indexer(
         {
           "x-api-key": "jNExV5Bud64raKqGiUBBQ2smiLuphGB48PdPqh3N",
@@ -77,11 +68,11 @@ function App() {
   useEffect(() => {
     //navigate("/BridgingReport");
     navigate("/");
-    const urlParams = new URLSearchParams(window.location.search);
+    /*const urlParams = new URLSearchParams(window.location.search);
     const from = urlParams.get("from");
     const to = urlParams.get("to");
     from && setFrom(from);
-    to && setTo(to);
+    to && setTo(to);*/
   }, []);
 
   useEffect(() => {
