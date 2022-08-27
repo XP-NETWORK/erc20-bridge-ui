@@ -23,15 +23,19 @@ class TransactionWatcher {
   };
 
   async findAlgoTrx(hash) {
-    let evmId;
 
+    let evmId;
+    let errorCtn = 0
+    
     const search = async () => {
       const [actionId, data] = await Promise.all([
         (async () => {
           return await this.getEvmActionId(hash);
         })(),
         (async () => {
-          throw new Error("ds");
+   
+          if (evmId) return evmId
+          console.log('axios');
           const { data } = await this.axios(
             `https://indexer.algoexplorerapi.io/rl/v1/transactions?page=1&&limit=10&&application-id=${APPLICATION_ID}`
           ).catch((e) => {
@@ -63,13 +67,17 @@ class TransactionWatcher {
     };
 
     return new Promise(async (resolve, reject) => {
-      let trxHash;
-
+ 
       search()
-        .then((tx) => tx && resolve(tx))
+        .then((tx) => {
+          if (tx) {
+          clearInterval(interval);
+          return resolve(tx)
+          }
+        })
         .catch((e) => {
-          console.log(e, " on top in algo search");
-          reject("bilbo");
+         // console.log(e, " on top in algo search");
+        //reject("bilbo");
         });
 
       const interval = setInterval(() => {
@@ -77,16 +85,20 @@ class TransactionWatcher {
           .then((tx) => {
             if (tx) {
               clearInterval(interval);
-              tx && resolve(tx);
+              return resolve(tx);
             }
           })
           .catch((e) => {
             console.log(e, " on top in algo search");
-            reject("bilbo");
+            if (errorCtn >= 6) {
+              clearInterval(interval);
+              return reject("error getting algoTx");
+            }
+            errorCtn++
           });
-      }, 5000);
+      }, 6000);
 
-      // setTimeout(() => , 30 * 60000)
+       setTimeout(() => clearInterval(interval), 10 * 60000)
     });
   }
 

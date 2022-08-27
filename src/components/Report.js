@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import cancelBtn from "../img/close popup.svg";
 import auditedLogo from "../img/audited.svg";
 import poweredByLogo from "../img/powered by xp.svg";
@@ -8,7 +8,7 @@ import copyIcon from "../img/copy/default.svg";
 import secureIcon from "../img/secure tx.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTransactionDetails } from "../store/accountSlice";
+import { updateTransactionDetails, updateHash } from "../store/accountSlice";
 import { cutDigitAfterDot } from "../utils/utilsFunc";
 import {
   CHAINS_TYPE,
@@ -16,7 +16,10 @@ import {
   CHAINS_TOKENS,
 } from "../utils/consts";
 
-import { format } from "./helpers";
+import TrxWatcher from "../service/transactions";
+import { Loader } from "./loaders/Loader";
+
+const tw = TrxWatcher()
 
 export default function Report() {
   const MAX_CHAR_ADDRESS = 15;
@@ -27,12 +30,31 @@ export default function Report() {
   }));
 
   const sourceHash = useSelector((state) => state.account.sourceHash);
+  const [destHash, setDesthash] = useState('')
 
-  const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
+  useEffect(() => {
+   /* setTimeout(() => {
+      dispatch(updateHash('0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0'))
+    
+    }, 2000)*/
+  }, [])
+
+  //const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
 
   const address = useSelector((state) => state.account.address);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    sourceHash && (async () => {
+      if (transaction.fromChain === CHAINS_TYPE.BSC) {
+        const tx = await tw.findAlgoTrx(sourceHash);
+        tx && setDesthash(tx)
+        return
+      } 
+    })()  
+  }, [sourceHash])
 
   const handleCloseReport = () => {
     dispatch(
@@ -102,16 +124,18 @@ export default function Report() {
                   )}
 
                   {
+                    destHash ? 
                     <a
                       className="accountAddressLabel"
-                      href={`${CHAINS_EXPLORERS_TX}${desthash}`}
+                      href={`${CHAINS_EXPLORERS_TX[transaction.toChain]}${destHash}`}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {desthash.slice(0, MAX_CHAR_ADDRESS) +
+
+                      {destHash.slice(0, 12) +
                         "..." +
-                        desthash.slice(-4)}
-                    </a>
+                        destHash.slice(-4)}
+                    </a> : <Loader/>
                   }
                   <button>
                     <img

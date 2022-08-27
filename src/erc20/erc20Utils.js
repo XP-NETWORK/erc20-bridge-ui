@@ -134,14 +134,11 @@ export const transfer = async (
     amountBigNumber,
     destAddress,
     fee
-  );
+  ).catch(e => {
+    throw e
+  })
   console.log(transfer, "transfer");
 
-  /*const interval = setInterval(() => {
-    tw.getAlgoPending(destAddress);
-  }, 1000);
-
-  setTimeout(() => clearInterval(interval), 2 * 60000);*/
 
   return transfer;
 };
@@ -152,6 +149,10 @@ export const getFeeBscToAlgo = async () => {
     CONTRACT_ADDRESS,
     ChainNonce.Algorand
   );
+
+  const transferFee = await bridge.estimateTransferNative()
+
+  console.log(transferFee, 'transferFee');
 
   let divideBy = ChainInfo[ChainNonce.BSC].decimals;
 

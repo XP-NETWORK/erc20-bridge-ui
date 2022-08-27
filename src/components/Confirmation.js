@@ -115,7 +115,6 @@ export default function Confirmation() {
           address
         );
         dispatch(updateHash(sourceHash));
-
         navigate(`/BridgingReport`);
       } catch (e) {
         console.log(e);
