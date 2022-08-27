@@ -150,9 +150,6 @@ export const getFeeBscToAlgo = async () => {
     ChainNonce.Algorand
   );
 
-  const transferFee = await bridge.estimateTransferNative()
-
-  console.log(transferFee, 'transferFee');
 
   let divideBy = ChainInfo[ChainNonce.BSC].decimals;
 
