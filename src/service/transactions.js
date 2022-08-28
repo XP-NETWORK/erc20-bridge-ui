@@ -12,6 +12,11 @@ const bigIntFromBe = (buf) => new BigNumber(`0x${buf.toString("hex")}`, 16);
 class TransactionWatcher {
   constructor() {
     this.axios = axios.create();
+    this.axios.defaults.headers = {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      Expires: "0",
+    };
   }
 
   decode = (log) => log && bigIntFromBe(b64Decode(log));
@@ -23,19 +28,16 @@ class TransactionWatcher {
   };
 
   async findAlgoTrx(hash) {
-
     let evmId;
-    let errorCtn = 0
-    
+    let errorCtn = 0;
+
     const search = async () => {
       const [actionId, data] = await Promise.all([
         (async () => {
+          if (evmId) return evmId;
           return await this.getEvmActionId(hash);
         })(),
         (async () => {
-   
-          if (evmId) return evmId
-          console.log('axios');
           const { data } = await this.axios(
             `https://indexer.algoexplorerapi.io/rl/v1/transactions?page=1&&limit=10&&application-id=${APPLICATION_ID}`
           ).catch((e) => {
@@ -67,8 +69,7 @@ class TransactionWatcher {
     };
 
     return new Promise(async (resolve, reject) => {
- 
-      search()
+      /*search()
         .then((tx) => {
           if (tx) {
           clearInterval(interval);
@@ -78,7 +79,7 @@ class TransactionWatcher {
         .catch((e) => {
          // console.log(e, " on top in algo search");
         //reject("bilbo");
-        });
+        });*/
 
       const interval = setInterval(() => {
         search()
@@ -94,11 +95,11 @@ class TransactionWatcher {
               clearInterval(interval);
               return reject("error getting algoTx");
             }
-            errorCtn++
+            errorCtn++;
           });
       }, 6000);
 
-       setTimeout(() => clearInterval(interval), 10 * 60000)
+      setTimeout(() => clearInterval(interval), 10 * 60000);
     });
   }
 
