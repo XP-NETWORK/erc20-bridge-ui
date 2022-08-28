@@ -1,6 +1,6 @@
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
+import { ethers, BigNumber as BN } from "ethers";
 import {
   ASSET_ID,
   CHAINS_TYPE,
@@ -27,6 +27,10 @@ const {
   ChainInfo,
 } = require("xpjs-erc20");
 const { prov } = require("./provider");
+
+const Web3Client = new Web3(
+  new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
+);
 
 export const bridge = erc20MultiBridge(
   {
@@ -120,40 +124,60 @@ export const transfer = async (
     fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
     nonceReciever
   );
+
   let divideBy = ChainInfo[nonceSender].decimals;
   let amBigNum = new BigNumber(amount);
-  // console.log("am bignumber", amBigNum);
-  let amountBigNumber = amBigNum.multipliedBy(divideBy).integerValue();
-  // console.log("amount bignumber", amountBigNumber);
-  // console.log("fee", fee);
-  let transfer = await bridge.transferTokens(
-    nonceSender,
-    signer,
-    fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
-    nonceReciever,
-    amountBigNumber,
-    destAddress,
-    fee
-  ).catch(e => {
-    throw e
-  })
-  console.log(transfer, "transfer");
 
+  let amountBigNumber = amBigNum.multipliedBy(divideBy).integerValue();
+
+  console.log(fromChain, "fromChain");
+  console.log(nonceReciever, "nonceReciever");
+  console.log(destAddress, "destAddress");
+  console.log(signer, "signer");
+  console.log(fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID);
+  console.log(amountBigNumber, "amountBigNumber");
+
+  let transfer = await bridge
+    .transferTokens(
+      nonceSender,
+      signer,
+      fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
+      nonceReciever,
+      amountBigNumber,
+      destAddress,
+      fee
+    )
+    .catch((e) => {
+      console.log(e);
+      throw e;
+    });
+  console.log(transfer, "transfer");
 
   return transfer;
 };
 
 export const getFeeBscToAlgo = async () => {
+  const provider =
+    window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
+
   let fee = await bridge.estimateFees(
     ChainNonce.BSC,
     CONTRACT_ADDRESS,
     ChainNonce.Algorand
   );
 
-
   let divideBy = ChainInfo[ChainNonce.BSC].decimals;
 
-  return (fee.toNumber() / divideBy).toFixed(10);
+  const price = await provider.getGasPrice();
+
+  const gasFee = new BigNumber(72300)
+    .multipliedBy(price._hex)
+    .dividedBy(divideBy)
+    .toNumber();
+
+  const fees = fee.toNumber() / divideBy;
+
+  return (fees + gasFee).toFixed(6);
 };
 
 export const getFeeAlgoToBsc = async () => {
@@ -164,6 +188,7 @@ export const getFeeAlgoToBsc = async () => {
   );
   let divideBy = ChainInfo[ChainNonce.Algorand].decimals;
   console.log("FeeAlgoToBsc", fee);
+
   return fee.toNumber() / divideBy;
 };
 
@@ -240,10 +265,6 @@ export const getAlgoData = async (account, fromChain) => {
     throw e;
   }
 };
-
-const Web3Client = new Web3(
-  new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
-);
 
 export const getBalance = async (acc) => {
   const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);

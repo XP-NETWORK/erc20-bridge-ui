@@ -35,18 +35,22 @@ function App() {
 
   useEffect(() => {
     setTimeout(async () => {
+      /*const a = await tw.getEvmActionId(
+        "0x07668c6d86330f92f5ec82c2611307c5385c5df8d6b6823ee65f4a8d5bcbdf60"
+      );
+      console.log(a);
       /*const id = await tw.getEvmActionId(
         "0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0"
       );
       tw.decode("AAAAAAAAB2Y=");
       console.log(id);*/
+      //0x606042f1abee5d534797ea821f839b86f68860b5b26a3c838570cad8d2165290
       /* const tx = await tw
         .findAlgoTrx(
-          "0xa99d1d8b5b14c0ebda311e1467e54296647af451ec7bcc9be538b5b3ad88b4e6"
+          "0x07668c6d86330f92f5ec82c2611307c5385c5df8d6b6823ee65f4a8d5bcbdf60"
         )
         .catch((e) => "");
-      console.log(tx);
-
+      console.log(tx);*/
       /* const x = new Indexer(
         {
           "x-api-key": "jNExV5Bud64raKqGiUBBQ2smiLuphGB48PdPqh3N",

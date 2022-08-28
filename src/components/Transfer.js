@@ -288,22 +288,24 @@ export default function Transfer(props) {
   };
 
   const handleAddressChanged = (e) => {
-    if (e.target.value !== "") {
-      setDestinationAddress(e.target.value);
-      setShowAddressPasted(false);
-    }
+    //if (e.target.value !== "") {
+    setDestinationAddress(e.target.value);
+    setShowAddressPasted(false);
+    //}
   };
 
   const handleTokenAmountChange = (e) => {
     let numAsString = e.target.value.toString();
 
-    if (!numAsString) {
+    if (!numAsString || /[A-Za-z]/.test(numAsString)) {
       return setXpnetTokenAmount(0);
     }
 
     if (numAsString.at(-1) === ".") {
       return setXpnetTokenAmount(numAsString);
     }
+
+    setAmountZero(false);
 
     setXpnetTokenAmount(parseFloat(numAsString).toString());
   };

@@ -70,7 +70,7 @@ export default function Connect() {
   }, [account]);
 
   useEffect(() => {
-    if (!ethereum) {
+    if (!ethereum && window.innerWidth > 600) {
       console.log("please install MetaMask");
       setShowMetaWallet(false);
     }
@@ -137,16 +137,24 @@ export default function Connect() {
             Transfer asset <br />
             between blockchains
           </h1>
-          <img
-            src={metaIcon}
-            className="btnWallet"
-            onClick={connectMetaMaskWalletHandler}
-          />
-          <img
-            src={MyAlgoIcon}
-            className="btnWallet"
-            onClick={connectMyAlgoHandler}
-          />
+          <div className="walletsWrapper">
+            <div className="walletItem">
+              <img
+                src={metaIcon}
+                className="btnWallet"
+                onClick={connectMetaMaskWalletHandler}
+              />
+              <span>MetaMask</span>
+            </div>
+            <div className="walletItem">
+              <img
+                src={MyAlgoIcon}
+                className="btnWallet"
+                onClick={connectMyAlgoHandler}
+              />
+              <span>MyAlgo</span>
+            </div>
+          </div>
         </div>
       </div>
 

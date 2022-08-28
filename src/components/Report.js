@@ -5,6 +5,7 @@ import poweredByLogo from "../img/powered by xp.svg";
 import bscIcon from "../img/BSC.svg";
 import algorandIcon from "../img/Algorand.svg";
 import copyIcon from "../img/copy/default.svg";
+import failed from "../img/icon/failed.svg";
 import secureIcon from "../img/secure tx.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,7 +20,7 @@ import {
 import TrxWatcher from "../service/transactions";
 import { Loader } from "./loaders/Loader";
 
-const tw = TrxWatcher()
+const tw = TrxWatcher();
 
 export default function Report() {
   const MAX_CHAR_ADDRESS = 15;
@@ -30,14 +31,15 @@ export default function Report() {
   }));
 
   const sourceHash = useSelector((state) => state.account.sourceHash);
-  const [destHash, setDesthash] = useState('')
+  const [destHash, setDesthash] = useState("");
+  const [failedTrx, setFailedTrx] = useState(false);
 
   useEffect(() => {
-   /* setTimeout(() => {
-      dispatch(updateHash('0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0'))
-    
-    }, 2000)*/
-  }, [])
+    setTimeout(() => {
+      //dispatch(updateHash('0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0'))
+      //setFailedTrx(true);
+    }, 2000);
+  }, []);
 
   //const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
 
@@ -45,16 +47,23 @@ export default function Report() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-    sourceHash && (async () => {
-      if (transaction.fromChain === CHAINS_TYPE.BSC) {
-        const tx = await tw.findAlgoTrx(sourceHash);
-        tx && setDesthash(tx)
-        return
-      } 
-    })()  
-  }, [sourceHash])
+    sourceHash &&
+      (async () => {
+        if (transaction.fromChain === CHAINS_TYPE.BSC) {
+          const tx = await tw
+            .findAlgoTrx(sourceHash)
+            .catch(() => setFailedTrx(true));
+          tx && setDesthash(tx);
+          return;
+        }
+
+        if (transaction.fromChain === CHAINS_TYPE.Algorand) {
+          tw.listenEvmUnfreeze();
+          return;
+        }
+      })();
+  }, [sourceHash]);
 
   const handleCloseReport = () => {
     dispatch(
@@ -114,7 +123,7 @@ export default function Report() {
               </label>*/}
               <div className="flexRow mobileColumn">
                 <label className="confirmTitle" style={{ width: "177px" }}>
-                  Destination hash
+                  Destination Hash
                 </label>
                 <div className="greyBox greyBoxMobileConfirmation">
                   {transaction.toChain === CHAINS_TYPE.BSC ? (
@@ -123,20 +132,25 @@ export default function Report() {
                     <img src={algorandIcon} />
                   )}
 
-                  {
-                    destHash ? 
+                  {failedTrx ? (
+                    <div className="failedTrx">
+                      {" "}
+                      <span>Fail</span> <img src={failed} alt="failed" />
+                    </div>
+                  ) : destHash ? (
                     <a
                       className="accountAddressLabel"
-                      href={`${CHAINS_EXPLORERS_TX[transaction.toChain]}${destHash}`}
+                      href={`${
+                        CHAINS_EXPLORERS_TX[transaction.toChain]
+                      }${destHash}`}
                       target="_blank"
                       rel="noreferrer"
                     >
-
-                      {destHash.slice(0, 12) +
-                        "..." +
-                        destHash.slice(-4)}
-                    </a> : <Loader/>
-                  }
+                      {destHash.slice(0, 13) + "..." + destHash.slice(-4)}
+                    </a>
+                  ) : (
+                    <Loader />
+                  )}
                   <button>
                     <img
                       src={copyIcon}
