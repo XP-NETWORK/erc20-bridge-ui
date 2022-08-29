@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Bridge__factory } from "web3-erc20-contracts-types";
 import BigNumber from "bignumber.js";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
-import { APPLICATION_ID } from "../utils/consts";
+import { APPLICATION_ID, BSC_NODE } from "../utils/consts";
 
 const b64Decode = (raw) => Buffer.from(raw, "base64");
 
@@ -16,7 +16,7 @@ class TransactionWatcher {
       return;
     }
     this.axios = axios.create();
-    this.provider = new JsonRpcProvider("https://bsc-dataseed2.binance.org");
+    this.provider = new JsonRpcProvider(BSC_NODE);
   }
 
   decode = (log) => log && bigIntFromBe(b64Decode(log)).toNumber();
@@ -129,10 +129,26 @@ class TransactionWatcher {
     return actionId && parseInt(actionId["_hex"], 16);
   }
 
-  async findEvmTrx(hash) {
-    const { data } = await this.axios(
-      `https://indexer.algoexplorerapi.io/v2/transactions/${hash}`
-    );
+  async getAlgoTrx(hash) {
+    try {
+      const { data } = await this.axios(
+        `https://indexer.algoexplorerapi.io/v2/transactions/${hash}`
+      );
+      return data;
+    } catch (e) {
+      console.log("error getting algo trx");
+      await new Promise((resolve) => setTimeout(() => resolve("1"), 4000));
+      return await this.getAlgoTrx(hash);
+    }
+  }
+
+  async findEvmTrx(hash, destinationAddress, interavalCb) {
+    //let algoActionId
+    await new Promise((resolve) => setTimeout(() => resolve("1"), 5000));
+    console.log("starting ", hash);
+    console.log("to ", destinationAddress);
+
+    const data = await this.getAlgoTrx(hash);
 
     if (data.transaction) {
       const logs = data.transaction?.logs;
@@ -141,7 +157,14 @@ class TransactionWatcher {
         const actionId = this.decode(logs[1]);
 
         if (actionId) {
-          return actionId;
+          console.log("actionI is ", actionId);
+          const tx = await this.listenEvmUnfreeze(
+            actionId,
+            destinationAddress,
+            interavalCb
+          ).catch((e) => e);
+
+          return tx;
         }
       }
     }
@@ -165,29 +188,71 @@ class TransactionWatcher {
 
     const actionId = id && parseInt(id._hex);
 
-    console.log(this.unpair(actionId));
+    return actionId && this.unpair(actionId)[0];
   }
 
-  listenEvmUnfreeze() {
-    return new Promise((resolve, reject) => {
+  listenEvmUnfreeze(depActionId, destinationAddress, interavalCb) {
+    return new Promise(async (resolve, reject) => {
       const contract = Bridge__factory.connect(
         "0x91105e661C500e6651f04CF76787297e534b97a5",
         this.provider
       );
 
-      const unfreeze = contract.filters.Unfreeze();
+      const fna = async () => {
+        const block = await this.provider.getBlockNumber();
 
-      console.log("START LISTENING ");
-      contract.on(unfreeze, (...args) => {
-        //console.log(args?.actionId);
-        console.log({ args }, "listener");
-        resolve("somthing");
+        const logs = await this.provider.getLogs({
+          address: "0x8cf8238abf7b933bf8bb5ea2c7e4be101c11de2a",
+          toBlock: block, //block,
+          fromBlock: block - 20, //block - 100,
+          topics: [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000091105e661c500e6651f04cf76787297e534b97a5",
+            `0x000000000000000000000000${destinationAddress.substr(2)}`,
+          ],
+        });
+
+        console.log(depActionId, "depActionId");
+        console.log(logs);
+        if (logs.length) {
+          for (const log of logs) {
+            const actionId = await this.getEvmTrxData(log.transactionHash);
+            console.log(actionId);
+            if (actionId === depActionId) {
+              //clearInterval(interval);
+              //return resolve(log.transactionHash);
+              return log.transactionHash;
+            }
+          }
+        }
+      };
+
+      //const logs = await fna();
+      const interval = setInterval(
+        () =>
+          fna().then((tx) => {
+            console.log(tx, "tx");
+            if (tx) {
+              clearInterval(interval);
+              return resolve(tx);
+            }
+          }),
+        10000
+      );
+      interavalCb(interval);
+      fna().then((tx) => {
+        console.log(tx, "tx");
+        if (tx) {
+          clearInterval(interval);
+          return resolve(tx);
+        }
       });
 
       setTimeout(() => {
-        contract.removeListener(unfreeze);
-        reject("timeout");
-      }, 10 * 60000);
+        clearInterval(interval);
+        return reject("");
+      }, 30 * 60000);
+      //resolve(logs);
     });
   }
 }

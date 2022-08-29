@@ -35,6 +35,7 @@ function App() {
 
   useEffect(() => {
     setTimeout(async () => {
+      //onsole.log(await tw.listenEvmUnfreeze());
       /*const a = await tw.getEvmActionId(
         "0x07668c6d86330f92f5ec82c2611307c5385c5df8d6b6823ee65f4a8d5bcbdf60"
       );

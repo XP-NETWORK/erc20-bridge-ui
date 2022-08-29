@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import cancelBtn from "../img/close popup.svg";
 import auditedLogo from "../img/audited.svg";
 import poweredByLogo from "../img/powered by xp.svg";
@@ -30,6 +30,8 @@ export default function Report() {
     //fromChain: CHAINS_TYPE.Algorand,
   }));
 
+  const refInt = useRef(null);
+
   const sourceHash = useSelector((state) => state.account.sourceHash);
   const [destHash, setDesthash] = useState("");
   const [failedTrx, setFailedTrx] = useState(false);
@@ -59,7 +61,17 @@ export default function Report() {
         }
 
         if (transaction.fromChain === CHAINS_TYPE.Algorand) {
-          tw.listenEvmUnfreeze();
+          const tx = await tw
+            .findEvmTrx(
+              sourceHash,
+              transaction.destinationAddress,
+              (interval) => {
+                refInt.current = interval;
+              }
+            )
+            .catch(() => setFailedTrx(true));
+          tx && setDesthash(tx);
+
           return;
         }
       })();
@@ -75,6 +87,8 @@ export default function Report() {
         fee: 0,
       })
     );
+
+    refInt.current && clearInterval(refInt.current);
     navigate("/");
     //restart redux
   };
@@ -180,9 +194,7 @@ export default function Report() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {sourceHash.slice(0, MAX_CHAR_ADDRESS) +
-                      "..." +
-                      sourceHash.slice(-4)}
+                    {sourceHash.slice(0, 12) + "..." + sourceHash.slice(-4)}
                   </a>
                   <button>
                     <img
@@ -194,7 +206,7 @@ export default function Report() {
                 </div>
               </div>
               <label className="line" />
-              <div className="flexRow ">
+              <div className="flexRow fees">
                 <label className="confirmTitle">Fee</label>
                 <label>
                   {cutDigitAfterDot(transaction.fee, 10)}{" "}

@@ -21,6 +21,10 @@ body {
   width: 400px;
 }
 
+.transferBox {
+  position: relative;
+}
+
 .transferBox.transfer,
 .transferBox.confirm,
 .transferBox.report {
@@ -143,6 +147,28 @@ body {
   color: rgb(255, 0, 85);
   font-size: 12px;
   margin-right: 7px;
+}
+
+.btnContainer {
+  padding-top: 20px;
+}
+
+.connectYourWalletBtn {
+  width: 100%;
+}
+
+.wraperConfirm .flexColumn {
+  grid-gap: 25px;
+}
+
+.flexRow.fees {
+  margin-top: 8px;
+}
+
+.secureLabel {
+  margin: 10px auto 10px auto;
+  display: flex;
+  justify-content: center;
 }
 
 span.errorNotif {

@@ -273,17 +273,18 @@ export default function Confirmation() {
                 />
               </div>
             </div>
-
-            <button
-              className="connectYourWalletBtn sendTranBtn"
-              onClick={sendTransaction}
-              disabled={!approveTransaction}
-            >
-              Send
-            </button>
-            <div className="secureLabel">
-              <img src={secureIcon} />
-              <label>Secure transaction</label>
+            <div className="btnContainer">
+              <button
+                className="connectYourWalletBtn sendTranBtn"
+                onClick={sendTransaction}
+                disabled={!approveTransaction}
+              >
+                Send
+              </button>
+              <div className="secureLabel">
+                <img src={secureIcon} />
+                <label>Secure transaction</label>
+              </div>
             </div>
           </div>
         </div>

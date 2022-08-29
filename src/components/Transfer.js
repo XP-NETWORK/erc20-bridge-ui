@@ -33,6 +33,7 @@ import {
   getFeeBscToAlgo,
   getBalance,
   getChainBalance,
+  transfer,
 } from "../erc20/erc20Utils";
 import { useWeb3React } from "@web3-react/core";
 
@@ -81,7 +82,7 @@ export default function Transfer(props) {
     transactionDetails: state.account.transactionDetails,
   }));
 
-  const period = 10000;
+  const period = 15000;
 
   let fee = useRef("0");
   let bal = useRef("0");
@@ -100,14 +101,22 @@ export default function Transfer(props) {
   const getFees = async () => {
     try {
       if (currentAccount) {
+        console.log(currentAccount, "currentAccount");
+        console.log(fromChain);
+        console.log(active, "active");
         if (active) {
+          console.log("giro");
           let feeBsc = await getFeeBscToAlgo();
-          fee.current !== feeBsc && setFee(feeBsc);
-          fee.current = feeBsc;
-        } else {
+          if (feeBsc) {
+            fee.current !== feeBsc && setFee(feeBsc);
+            fee.current = feeBsc;
+          }
+        } else if (fromChain === CHAINS_TYPE.Algorand) {
           let feealgo = await getFeeAlgoToBsc();
-          fee.current !== feealgo && setFee(feealgo);
-          fee.current = feealgo;
+          if (feealgo) {
+            fee.current !== feealgo && setFee(feealgo);
+            fee.current = feealgo;
+          }
         }
 
         setFeeBlury(false);
@@ -163,7 +172,6 @@ export default function Transfer(props) {
       setBlury(true);
       setFeeBlury(true);
       if (active) {
-        console.log("arrar");
         getBalance(currentAccount).then(({ tokenSymbol, xpnet }) => {
           setTokenSymbol(tokenSymbol);
           setAccountBalance(xpnet);
@@ -173,7 +181,6 @@ export default function Transfer(props) {
         getUserbalance(currentAccount);
         interval = setInterval(() => getUserbalance(currentAccount), period);
       } else {
-        console.log("gekko");
         try {
           console.log(currentAccount, "currentAccount");
           getAlgoData(currentAccount, CHAINS_TYPE.Algorand)
@@ -205,13 +212,13 @@ export default function Transfer(props) {
   }, [currentAccount]);
 
   const swapChains = async () => {
-    let newAcc;
     try {
       if (fromChain === CHAINS_TYPE.BSC) {
         const accountsSharedByUser = await connectAlgo();
 
         if (accountsSharedByUser) {
           deactivate();
+
           setTimeout(
             () => dispatch(connectedAccount(accountsSharedByUser[0].address)),
             500
@@ -220,7 +227,6 @@ export default function Transfer(props) {
       } else {
         await connectMM(activate, InjectedMetaMask);
         console.log(InjectedMetaMask, "InjectedMetaMask");
-        //dispatch(connectedAccount(InjectedMetaMask));
       }
 
       dispatch(
@@ -296,6 +302,18 @@ export default function Transfer(props) {
 
   const handleTokenAmountChange = (e) => {
     let numAsString = e.target.value.toString();
+
+    console.log(numAsString, "numAsString");
+
+    const dots = numAsString.match(/\./g);
+
+    if (dots && dots.length > 1) {
+      return;
+    }
+
+    //if (///.test(numAsString)) {
+    //return;
+    //}
 
     if (!numAsString || /[A-Za-z]/.test(numAsString)) {
       return setXpnetTokenAmount(0);

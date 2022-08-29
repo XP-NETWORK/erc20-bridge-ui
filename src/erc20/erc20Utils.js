@@ -7,6 +7,7 @@ import {
   CONTRACT_ADDRESS,
   BSC,
   APPLICATION_ID,
+  BSC_NODE,
 } from "../utils/consts";
 
 import abi from "../utils/ABI.json";
@@ -28,9 +29,7 @@ const {
 } = require("xpjs-erc20");
 const { prov } = require("./provider");
 
-const Web3Client = new Web3(
-  new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org/")
-);
+const Web3Client = new Web3(new Web3.providers.HttpProvider(BSC_NODE));
 
 export const bridge = erc20MultiBridge(
   {
@@ -181,15 +180,19 @@ export const getFeeBscToAlgo = async () => {
 };
 
 export const getFeeAlgoToBsc = async () => {
-  let fee = await bridge.estimateFees(
-    ChainNonce.Algorand,
-    ASSET_ID,
-    ChainNonce.BSC
-  );
-  let divideBy = ChainInfo[ChainNonce.Algorand].decimals;
-  console.log("FeeAlgoToBsc", fee);
+  try {
+    let fee = await bridge.estimateFees(
+      ChainNonce.Algorand,
+      ASSET_ID,
+      ChainNonce.BSC
+    );
+    let divideBy = ChainInfo[ChainNonce.Algorand].decimals;
+    console.log("FeeAlgoToBsc", fee);
 
-  return fee.toNumber() / divideBy;
+    return fee.toNumber() / divideBy;
+  } catch (e) {
+    return null;
+  }
 };
 
 // getFeeBscToAlgo();
