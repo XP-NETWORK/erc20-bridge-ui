@@ -176,9 +176,11 @@ span.errorNotif {
   color: red;
   font-size: 12px;
   position: absolute;
-  bottom: -17px;
+  bottom: -22px;
   right: 0;
   font-style: italic;
+  width: 120px;
+  text-align: right;
 }
 
 .insufficient span.errorNotif {

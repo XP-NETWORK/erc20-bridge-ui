@@ -44,6 +44,12 @@ export const accountSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+
+    reset: () => {
+      return {
+        ...initialState,
+      };
+    },
   },
 });
 
@@ -54,6 +60,7 @@ export const {
   incrementByAmount,
   updateHash,
   setError,
+  reset,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

@@ -9,7 +9,11 @@ import failed from "../img/icon/failed.svg";
 import secureIcon from "../img/secure tx.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { updateTransactionDetails, updateHash } from "../store/accountSlice";
+import {
+  updateTransactionDetails,
+  updateHash,
+  reset,
+} from "../store/accountSlice";
 import { cutDigitAfterDot } from "../utils/utilsFunc";
 import {
   CHAINS_TYPE,
@@ -78,7 +82,7 @@ export default function Report() {
   }, [sourceHash]);
 
   const handleCloseReport = () => {
-    dispatch(
+    /* dispatch(
       updateTransactionDetails({
         xpnetAmount: 0,
         destinationAddress: "",
@@ -86,9 +90,10 @@ export default function Report() {
         toChain: CHAINS_TYPE.Algorand,
         fee: 0,
       })
-    );
+    );*/
 
     refInt.current && clearInterval(refInt.current);
+    dispatch(reset());
     navigate("/");
     //restart redux
   };
@@ -160,7 +165,9 @@ export default function Report() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {destHash.slice(0, 13) + "..." + destHash.slice(-4)}
+                      {destHash?.slice(0, 13)?.toUpperCase() +
+                        "..." +
+                        destHash?.slice(-4)?.toUpperCase()}
                     </a>
                   ) : (
                     <Loader />

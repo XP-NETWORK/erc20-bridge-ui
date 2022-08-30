@@ -144,11 +144,24 @@ class TransactionWatcher {
 
   async findEvmTrx(hash, destinationAddress, interavalCb) {
     //let algoActionId
-    await new Promise((resolve) => setTimeout(() => resolve("1"), 5000));
+    // await new Promise((resolve) => setTimeout(() => resolve("1"), 5000));
     console.log("starting ", hash);
     console.log("to ", destinationAddress);
 
-    const data = await this.getAlgoTrx(hash);
+    let data;
+
+    while (!data) {
+      await new Promise((resolve) => setTimeout(() => resolve("1"), 5000));
+      const res = await this.axios(
+        `https://indexer.algoexplorerapi.io/v2/transactions/${hash}`
+      ).catch(() => ({ data: null }));
+
+      data = res.data;
+    }
+
+    console.log(data);
+
+    //const data = await this.getAlgoTrx(hash);
 
     if (data.transaction) {
       const logs = data.transaction?.logs;
@@ -156,7 +169,7 @@ class TransactionWatcher {
       if (logs) {
         const actionId = this.decode(logs[1]);
 
-        if (actionId) {
+        if (actionId !== undefined) {
           console.log("actionI is ", actionId);
           const tx = await this.listenEvmUnfreeze(
             actionId,
@@ -203,7 +216,7 @@ class TransactionWatcher {
 
         const logs = await this.provider.getLogs({
           address: "0x8cf8238abf7b933bf8bb5ea2c7e4be101c11de2a",
-          toBlock: block, //block,
+          toBlock: block,
           fromBlock: block - 20, //block - 100,
           topics: [
             "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -217,10 +230,8 @@ class TransactionWatcher {
         if (logs.length) {
           for (const log of logs) {
             const actionId = await this.getEvmTrxData(log.transactionHash);
-            console.log(actionId);
+
             if (actionId === depActionId) {
-              //clearInterval(interval);
-              //return resolve(log.transactionHash);
               return log.transactionHash;
             }
           }

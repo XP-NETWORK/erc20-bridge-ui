@@ -159,7 +159,6 @@ export default function Transfer(props) {
       userBalance &&
       Number(calculatedFee) > Number(userBalance)
     ) {
-      console.log(calculatedFee, userBalance, "da");
       setInsufficient(true);
     } else {
       setInsufficient(false);
@@ -310,10 +309,6 @@ export default function Transfer(props) {
     if (dots && dots.length > 1) {
       return;
     }
-
-    //if (///.test(numAsString)) {
-    //return;
-    //}
 
     if (!numAsString || /[A-Za-z]/.test(numAsString)) {
       return setXpnetTokenAmount(0);

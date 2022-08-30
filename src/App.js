@@ -36,10 +36,13 @@ function App() {
   useEffect(() => {
     setTimeout(async () => {
       //onsole.log(await tw.listenEvmUnfreeze());
-      /*const a = await tw.getEvmActionId(
-        "0x07668c6d86330f92f5ec82c2611307c5385c5df8d6b6823ee65f4a8d5bcbdf60"
+      /* const a = await tw.findEvmTrx(
+        "HIZAMDYTY5AHXSG7YRB3IOTZRYY5BSROI7LUN6RDSZOIXIQ5H64A",
+        "0x47Bf0dae6e92e49a3c95e5b0c71422891D5cd4FE"
       );
+
       console.log(a);
+
       /*const id = await tw.getEvmActionId(
         "0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0"
       );
@@ -95,7 +98,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    dispatch(connectedAccount(account));
+    console.log(account);
+    account && dispatch(connectedAccount(account));
   }, [account]);
 
   return (
