@@ -67,8 +67,6 @@ function App() {
 
   useEffect(() => {
     inIframe() && window.addEventListener("message", parentAccountChange);
-
-    console.log(inIframe());
     navigate("/");
 
     return () => window.removeEventListener("message", parentAccountChange);

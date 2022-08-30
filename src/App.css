@@ -176,11 +176,21 @@ span.errorNotif {
   color: red;
   font-size: 12px;
   position: absolute;
-  bottom: -22px;
+  bottom: -19px;
   right: 0;
   font-style: italic;
   width: 120px;
   text-align: right;
+}
+
+.reportAddres {
+  width: 252px;
+  flex: 0 0 auto;
+  justify-content: space-around;
+}
+
+.reportAddres button {
+  padding-right: 0;
 }
 
 .insufficient span.errorNotif {

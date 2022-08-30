@@ -119,17 +119,14 @@ export default function Confirmation() {
         navigate(`/BridgingReport`);
       } catch (e) {
         console.log(e);
+        if (e.message.includes("could not detect network")) {
+          await new Promise((resolve) =>
+            setTimeout(() => resolve("try again"), 5000)
+          );
+          await sendTransaction();
+        }
         setShowTransferLoader(false);
         dispatch(setError(e.message));
-        /*if (!(e instanceof TransferError)) {
-          // Some other error
-          console.log(e);
-          setErrorMsg("tranasaction failed");
-          setShowError(true);
-        }
-        const assetId = e.data;
-        setAssetId(assetId);
-        setShowOptIn(true);*/
       }
 
       //navigate("/BridgingReport");

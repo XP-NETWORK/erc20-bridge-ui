@@ -70,7 +70,7 @@ export default function Connect() {
       requestAccount().catch(console.error);
     }
 
-    loc.pathname !== "/" && dispatch(connectedAccount(account));
+    dispatch(connectedAccount(account));
   }, [account]);
 
   useEffect(() => {

@@ -93,8 +93,9 @@ export default function Report() {
     );*/
 
     refInt.current && clearInterval(refInt.current);
-    dispatch(reset());
-    navigate("/");
+    //dispatch(reset());
+    //navigate("/");
+    window.location.reload();
     //restart redux
   };
 
@@ -144,7 +145,11 @@ export default function Report() {
                 <label className="confirmTitle" style={{ width: "190px" }}>
                   Departure Hash
                 </label>
-                <div className="greyBox greyBoxMobileConfirmation">
+                <div
+                  className={`greyBox greyBoxMobileConfirmation ${
+                    sourceHash ? "reportAddres" : ""
+                  }`}
+                >
                   {transaction.fromChain === CHAINS_TYPE.BSC ? (
                     <img src={bscIcon} />
                   ) : (
@@ -159,7 +164,9 @@ export default function Report() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {sourceHash.slice(0, 12) + "..." + sourceHash.slice(-4)}
+                    {sourceHash.slice(0, 12)?.toUpperCase() +
+                      "..." +
+                      sourceHash.slice(-4)?.toUpperCase()}
                   </a>
                   <button>
                     <img
@@ -175,7 +182,11 @@ export default function Report() {
                 <label className="confirmTitle" style={{ width: "177px" }}>
                   Destination Hash
                 </label>
-                <div className="greyBox greyBoxMobileConfirmation">
+                <div
+                  className={`greyBox greyBoxMobileConfirmation ${
+                    destHash ? "reportAddres" : ""
+                  }`}
+                >
                   {transaction.toChain === CHAINS_TYPE.BSC ? (
                     <img src={bscIcon} />
                   ) : (

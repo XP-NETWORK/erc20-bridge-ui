@@ -90,7 +90,7 @@ export default function Transfer(props) {
   const getUserbalance = (currentAccount) =>
     getChainBalance(currentAccount)
       .then((balance) => {
-        bal.current !== balance && setUserBalance(balance);
+        setUserBalance(balance);
         bal.current = balance;
       })
       .catch((e) => {
@@ -104,7 +104,7 @@ export default function Transfer(props) {
         console.log(currentAccount, "currentAccount");
         console.log(fromChain);
         console.log(active, "active");
-        if (active) {
+        if (fromChain === CHAINS_TYPE.BSC) {
           console.log("giro");
           let feeBsc = await getFeeBscToAlgo();
           if (feeBsc) {
@@ -170,7 +170,7 @@ export default function Transfer(props) {
       let interval;
       setBlury(true);
       setFeeBlury(true);
-      console.log(fromChain);
+
       if (active && fromChain === CHAINS_TYPE.BSC) {
         getBalance(currentAccount).then(({ tokenSymbol, xpnet }) => {
           setTokenSymbol(tokenSymbol);
