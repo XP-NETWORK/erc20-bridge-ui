@@ -15,7 +15,7 @@ import { checkIfOptIn, getFees } from "../erc20/erc20Utils";
 import OptInPopup from "./errors/OptInPopup";
 import Error from "./errors/Error";
 import { CHAINS_TYPE } from "../utils/consts";
-
+import { useLocation } from "react-router";
 export const connectAlgo = async () => {
   const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
 
@@ -33,6 +33,7 @@ export const connectAlgo = async () => {
 };
 
 export const connectMM = async (activate, acc) => {
+  console.log("grisha boris");
   if (!window.ethereum) {
     alert("Install metaMask");
     return;
@@ -59,6 +60,8 @@ export default function Connect() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const loc = useLocation();
+
   useEffect(() => {
     if (isMetaConnected) {
       const requestAccount = async () => {
@@ -66,7 +69,8 @@ export default function Connect() {
       };
       requestAccount().catch(console.error);
     }
-    dispatch(connectedAccount(account));
+
+    loc.pathname !== "/" && dispatch(connectedAccount(account));
   }, [account]);
 
   useEffect(() => {

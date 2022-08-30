@@ -147,7 +147,14 @@ export const transfer = async (
       fee
     )
     .catch((e) => {
-      console.log(e);
+      if (e?.message?.includes("must opt in to asset")) {
+        throw new Error(
+          `Please add asset ${e?.message?.replace(
+            /[^0-9]/g,
+            ""
+          )} to Algo wallet`
+        );
+      }
       throw e;
     });
   console.log(transfer, "transfer");
@@ -270,18 +277,22 @@ export const getAlgoData = async (account, fromChain) => {
 };
 
 export const getBalance = async (acc) => {
-  const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
+  try {
+    const contract = new Web3Client.eth.Contract(abi, CONTRACT_ADDRESS);
 
-  const result = await contract.methods.balanceOf(acc).call(); // 29803630997051883414242659
-  const tokenSymbol = await contract.methods.symbol().call();
+    const result = await contract.methods.balanceOf(acc).call(); // 29803630997051883414242659
+    const tokenSymbol = await contract.methods.symbol().call();
 
-  const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
-  const xpnet = Number(format).toFixed(1);
+    const format = Web3Client.utils.fromWei(result); // 29803630.997051883414242659
+    const xpnet = Number(format).toFixed(1);
 
-  return {
-    tokenSymbol,
-    xpnet,
-  };
+    return {
+      tokenSymbol,
+      xpnet,
+    };
+  } catch (e) {
+    console.log(e, "e");
+  }
 };
 
 export const getChainBalance = async (acc) => {

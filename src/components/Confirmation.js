@@ -25,6 +25,7 @@ import {
   updateHash,
   setError,
   updateTransactionDetails,
+  reset,
 } from "../store/accountSlice";
 import Error from "./errors/Error";
 
@@ -137,6 +138,15 @@ export default function Confirmation() {
 
   return (
     <>
+      {/*
+        <button
+          onClick={() => {
+            dispatch(reset());
+            navigate("/");
+          }}
+        >
+          111
+        </button>*/}
       <div className="flexColumn">
         <div className="transferBox confirm">
           <div className="wraperConfirm">
@@ -174,37 +184,6 @@ export default function Confirmation() {
                 </div>
               </div>
               <div className="flexRow mobileColumn">
-                <label className="confirmTitle">Destination address</label>
-                <div className="greyBox greyBoxMobileConfirmation">
-                  <a
-                    className="accountAddressLabel"
-                    href={`${CHAINS_EXPLORERS[transaction.toChain]}${
-                      transaction.destinationAddress
-                    }`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {transaction.destinationAddress.slice(0, MAX_CHAR_ADDRESS) +
-                      "..." +
-                      transaction.destinationAddress.slice(-4)}
-                  </a>
-                  {/* <img src={copyIcon} /> */}
-                </div>
-              </div>
-              <div className="flexRow mobileColumn">
-                <label className="confirmTitle">Destination chain</label>
-                <div className="greyBoxMobileConfirmation">
-                  <label className="icontext centerMobile">
-                    {transaction.toChain === CHAINS_TYPE.BSC ? (
-                      <img src={bscIcon} />
-                    ) : (
-                      <img src={algorandIcon} />
-                    )}
-                    {transaction.toChain}
-                  </label>
-                </div>
-              </div>
-              <div className="flexRow mobileColumn">
                 <label className="confirmTitle">Departure chain</label>
                 <div className="greyBoxMobileConfirmation">
                   <label className="icontext centerMobile">
@@ -235,6 +214,38 @@ export default function Confirmation() {
                   {/* <img src={copyIcon} /> */}
                 </div>
               </div>
+              <div className="flexRow mobileColumn">
+                <label className="confirmTitle">Destination chain</label>
+                <div className="greyBoxMobileConfirmation">
+                  <label className="icontext centerMobile">
+                    {transaction.toChain === CHAINS_TYPE.BSC ? (
+                      <img src={bscIcon} />
+                    ) : (
+                      <img src={algorandIcon} />
+                    )}
+                    {transaction.toChain}
+                  </label>
+                </div>
+              </div>
+              <div className="flexRow mobileColumn">
+                <label className="confirmTitle">Destination address</label>
+                <div className="greyBox greyBoxMobileConfirmation">
+                  <a
+                    className="accountAddressLabel"
+                    href={`${CHAINS_EXPLORERS[transaction.toChain]}${
+                      transaction.destinationAddress
+                    }`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {transaction.destinationAddress.slice(0, MAX_CHAR_ADDRESS) +
+                      "..." +
+                      transaction.destinationAddress.slice(-4)}
+                  </a>
+                  {/* <img src={copyIcon} /> */}
+                </div>
+              </div>
+
               <label className="line" />
               <div className="flexRow">
                 <label className="confirmTitle marginTop">Fee</label>

@@ -141,6 +141,37 @@ export default function Report() {
                   Transaction ID
               </label>*/}
               <div className="flexRow mobileColumn">
+                <label className="confirmTitle" style={{ width: "190px" }}>
+                  Departure Hash
+                </label>
+                <div className="greyBox greyBoxMobileConfirmation">
+                  {transaction.fromChain === CHAINS_TYPE.BSC ? (
+                    <img src={bscIcon} />
+                  ) : (
+                    <img src={algorandIcon} />
+                  )}
+
+                  <a
+                    className="accountAddressLabel"
+                    href={`${
+                      CHAINS_EXPLORERS_TX[transaction.fromChain]
+                    }${sourceHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {sourceHash.slice(0, 12) + "..." + sourceHash.slice(-4)}
+                  </a>
+                  <button>
+                    <img
+                      src={copyIcon}
+                      className="copyImgIcon"
+                      onClick={() => navigator.clipboard.writeText(sourceHash)}
+                    />
+                  </button>
+                </div>
+              </div>
+              <label className="line" />
+              <div className="flexRow mobileColumn">
                 <label className="confirmTitle" style={{ width: "177px" }}>
                   Destination Hash
                 </label>
@@ -181,37 +212,7 @@ export default function Report() {
                   </button>
                 </div>
               </div>
-              <label className="line" />
-              <div className="flexRow mobileColumn">
-                <label className="confirmTitle" style={{ width: "190px" }}>
-                  Departure Hash
-                </label>
-                <div className="greyBox greyBoxMobileConfirmation">
-                  {transaction.fromChain === CHAINS_TYPE.BSC ? (
-                    <img src={bscIcon} />
-                  ) : (
-                    <img src={algorandIcon} />
-                  )}
 
-                  <a
-                    className="accountAddressLabel"
-                    href={`${
-                      CHAINS_EXPLORERS_TX[transaction.fromChain]
-                    }${sourceHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {sourceHash.slice(0, 12) + "..." + sourceHash.slice(-4)}
-                  </a>
-                  <button>
-                    <img
-                      src={copyIcon}
-                      className="copyImgIcon"
-                      onClick={() => navigator.clipboard.writeText(sourceHash)}
-                    />
-                  </button>
-                </div>
-              </div>
               <label className="line" />
               <div className="flexRow fees">
                 <label className="confirmTitle">Fee</label>

@@ -19,6 +19,8 @@ import { useSelector } from "react-redux";
 
 import transactions from "./service/transactions";
 
+import ChainFabric from "./service/chain";
+
 const tw = transactions();
 
 function App() {
@@ -33,68 +35,43 @@ function App() {
 
   const state = useSelector((state) => state);
 
-  useEffect(() => {
-    setTimeout(async () => {
-      //onsole.log(await tw.listenEvmUnfreeze());
-      /* const a = await tw.findEvmTrx(
-        "HIZAMDYTY5AHXSG7YRB3IOTZRYY5BSROI7LUN6RDSZOIXIQ5H64A",
-        "0x47Bf0dae6e92e49a3c95e5b0c71422891D5cd4FE"
-      );
+  const parentAccountChange = async (event) => {
+    if (event.data?.type === "ethAddress" && window.ethereum) {
+      const parentAddress = event.data.address;
+      console.log(parentAddress);
+      if (!parentAddress) return;
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const account = accounts[0];
+      if (parentAddress.toLowerCase() !== account.toLowerCase()) {
+        window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+      }
+    }
+  };
 
-      console.log(a);
-
-      /*const id = await tw.getEvmActionId(
-        "0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0"
-      );
-      tw.decode("AAAAAAAAB2Y=");
-      console.log(id);*/
-      //0x606042f1abee5d534797ea821f839b86f68860b5b26a3c838570cad8d2165290
-      /* const tx = await tw
-        .findAlgoTrx(
-          "0x07668c6d86330f92f5ec82c2611307c5385c5df8d6b6823ee65f4a8d5bcbdf60"
-        )
-        .catch((e) => "");
-      console.log(tx);*/
-      /* const x = new Indexer(
-        {
-          "x-api-key": "jNExV5Bud64raKqGiUBBQ2smiLuphGB48PdPqh3N",
-        },
-        "https://algoindexer.algoexplorerapi.io",
-        ""
-      );
-      const v = await x
-        .lookupAccountTransactions(
-          "NZQXP6BDGJ2HTLPNDRDJK74Z7UR26RKNYHOX3YQLBFEOTLIRK3HGRJ4TKU"
-        )
-        .do();
-
-      console.log(v);*/
-    }, 1000);
-  }, []);
+  function inIframe() {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  }
 
   useEffect(() => {
-    //navigate("/BridgingReport");
+    inIframe() && window.addEventListener("message", parentAccountChange);
+
+    console.log(inIframe());
     navigate("/");
-    /*const urlParams = new URLSearchParams(window.location.search);
-    const from = urlParams.get("from");
-    const to = urlParams.get("to");
-    from && setFrom(from);
-    to && setTo(to);*/
-  }, []);
 
-  useEffect(() => {
-    /*const algoSocket = io("https://token-notifier.xp.network");
-
-    setTimeout(() => {
-      console.log(algoSocket, "algoSocket");
-      algoSocket.on("algorand:bridge_tx", async (...args) => {
-        console.log(args, "hash in socket");
-      });
-
-      algoSocket.on("web3:bridge_tx", async (...args) => {
-        console.log(args, "hash in socket");
-      });
-    }, 2000);*/
+    return () => window.removeEventListener("message", parentAccountChange);
   }, []);
 
   useEffect(() => {

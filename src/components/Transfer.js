@@ -170,7 +170,8 @@ export default function Transfer(props) {
       let interval;
       setBlury(true);
       setFeeBlury(true);
-      if (active) {
+      console.log(fromChain);
+      if (active && fromChain === CHAINS_TYPE.BSC) {
         getBalance(currentAccount).then(({ tokenSymbol, xpnet }) => {
           setTokenSymbol(tokenSymbol);
           setAccountBalance(xpnet);
@@ -181,7 +182,6 @@ export default function Transfer(props) {
         interval = setInterval(() => getUserbalance(currentAccount), period);
       } else {
         try {
-          console.log(currentAccount, "currentAccount");
           getAlgoData(currentAccount, CHAINS_TYPE.Algorand)
             .then(({ tokenBalance, symbol, balance }) => {
               setTokenSymbol(symbol);
@@ -216,25 +216,30 @@ export default function Transfer(props) {
         const accountsSharedByUser = await connectAlgo();
 
         if (accountsSharedByUser) {
-          deactivate();
-
-          setTimeout(
-            () => dispatch(connectedAccount(accountsSharedByUser[0].address)),
-            500
+          dispatch(
+            updateTransactionDetails({
+              ...transactionDetails,
+              fromChain: toChain,
+              toChain: fromChain,
+            })
           );
+
+          setTimeout(() => {
+            deactivate();
+            dispatch(connectedAccount(accountsSharedByUser[0].address));
+          }, 500);
         }
       } else {
+        dispatch(
+          updateTransactionDetails({
+            ...transactionDetails,
+            fromChain: toChain,
+            toChain: fromChain,
+          })
+        );
         await connectMM(activate, InjectedMetaMask);
         console.log(InjectedMetaMask, "InjectedMetaMask");
       }
-
-      dispatch(
-        updateTransactionDetails({
-          ...transactionDetails,
-          fromChain: toChain,
-          toChain: fromChain,
-        })
-      );
     } catch (e) {}
   };
 
