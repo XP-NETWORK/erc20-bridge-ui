@@ -4,14 +4,14 @@ import {
   exchangeRateRepo,
   evNotifier,
 } from "xpjs-erc20";
-import { prov } from "../erc20/provider";
+import { provider } from "../erc20/provider";
 import algosdk from "algosdk";
 import { APPLICATION_ID } from "../utils/consts";
 
 export const bridge = erc20MultiBridge(
   {
     2: {
-      provider: prov,
+      provider,
       bridgeAddr: "0x91105e661C500e6651f04CF76787297e534b97a5",
     },
     5: {

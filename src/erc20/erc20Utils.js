@@ -27,14 +27,14 @@ const {
   ChainNonce,
   ChainInfo,
 } = require("xpjs-erc20");
-const { prov } = require("./provider");
+const { provider } = require("./provider");
 
 const Web3Client = new Web3(new Web3.providers.HttpProvider(BSC_NODE));
 
 export const bridge = erc20MultiBridge(
   {
     2: {
-      provider: prov,
+      provider,
       bridgeAddr: "0x91105e661C500e6651f04CF76787297e534b97a5",
     },
     5: {
@@ -198,6 +198,7 @@ export const getFeeAlgoToBsc = async () => {
 
     return fee.toNumber() / divideBy;
   } catch (e) {
+    console.log(e);
     return null;
   }
 };

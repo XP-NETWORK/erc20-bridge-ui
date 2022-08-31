@@ -5,6 +5,8 @@ import BigNumber from "bignumber.js";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
 import { APPLICATION_ID, BSC_NODE } from "../utils/consts";
 
+import { provider } from "../erc20/provider";
+
 const b64Decode = (raw) => Buffer.from(raw, "base64");
 
 const bigIntFromBe = (buf) => new BigNumber(`0x${buf.toString("hex")}`, 16);
@@ -186,8 +188,8 @@ class TransactionWatcher {
   async getEvmTrxData(
     hash = "0x102a7237359a69bb542affc02a62da8efb46a4eafad826cc270b8666ddaaa7e6"
   ) {
-    if (!window.ethereum) return;
-    let provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (!window.ethereum && window.innerWidth > 600) return;
+
     const res = await provider.getTransaction(hash);
 
     const contract = Bridge__factory.connect(
@@ -230,8 +232,10 @@ class TransactionWatcher {
         if (logs.length) {
           for (const log of logs) {
             const actionId = await this.getEvmTrxData(log.transactionHash);
+            console.log(actionId, "actionId");
 
-            if (actionId === depActionId) {
+            if (+actionId === +depActionId) {
+              console.log("go here");
               return log.transactionHash;
             }
           }

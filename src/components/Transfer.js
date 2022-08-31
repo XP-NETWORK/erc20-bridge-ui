@@ -112,6 +112,7 @@ export default function Transfer(props) {
             fee.current = feeBsc;
           }
         } else if (fromChain === CHAINS_TYPE.Algorand) {
+          console.log("about to get algo fees");
           let feealgo = await getFeeAlgoToBsc();
           if (feealgo) {
             fee.current !== feealgo && setFee(feealgo);
