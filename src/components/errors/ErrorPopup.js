@@ -14,6 +14,8 @@ import { getMyAlgoSigner } from "../../erc20/erc20Utils";
 import Button from "@restart/ui/esm/Button";
 
 export default function ErrorPopup({ errorMgs }) {
+  const [fetching, setFetching] = useState(false);
+
   const address = useSelector(
     (state) => state.account.transactionDetails.destinationAddress
   );
@@ -27,16 +29,20 @@ export default function ErrorPopup({ errorMgs }) {
   // };
 
   const optIn = async (id) => {
+    setFetching(true);
     const signer = await getMyAlgoSigner(address);
     console.log("signer", signer);
     const algo = await bridge.inner(ChainNonce.Algorand);
     if (id !== "") {
-      console.log("in");
       try {
-        await algo.optInAsa(signer, Number(id));
+        const tx = await algo.optInAsa(signer, Number(id));
+        if (tx) {
+          return d(setError(""));
+        }
       } catch (e) {
         console.log("cannot opt in", e);
       }
+      setFetching(false);
     }
   };
 
@@ -56,7 +62,7 @@ export default function ErrorPopup({ errorMgs }) {
         {errorMgs?.includes("Please add asset") && (
           <button
             className="connectYourWalletBtn sendTranBtn optInBtn"
-            onClick={() => optIn(errorMgs.replace(/[^0-9]/g, ""))}
+            onClick={() => !fetching && optIn(errorMgs.replace(/[^0-9]/g, ""))}
           >
             Opt in
           </button>
