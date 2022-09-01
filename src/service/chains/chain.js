@@ -13,8 +13,6 @@ class AbstractChain {
   }
 
   async preTransfer(amount) {
-    console.log(this.signer);
-    return;
     try {
       amount = new BigNumber(amount)
         .multipliedBy(ChainInfo[this.nonce].decimals)
@@ -85,14 +83,18 @@ class AbstractChain {
   }
 
   async getParams() {
-    const tokenPrams = this.tokenParams[this.nonce];
-    if (tokenPrams) return tokenPrams;
-    const res = await bridge.tokenParams(
-      this.nonce,
-      ChainInfo[this.nonce].xpnetToken
-    );
-    this.tokenParams[this.nonce] = res;
-    return res;
+    try {
+      const tokenPrams = this.tokenParams[this.nonce];
+      if (tokenPrams) return tokenPrams;
+      const res = await bridge.tokenParams(
+        this.nonce,
+        ChainInfo[this.nonce].xpnetToken
+      );
+      this.tokenParams[this.nonce] = res;
+      return res;
+    } catch (e) {
+      throw e;
+    }
   }
 
   async getFees(toChain) {

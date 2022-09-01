@@ -13,7 +13,7 @@ export const iniTransactionDetails = {
 };
 
 const initialState = {
-  address: "",
+  address: "0xe8a049E1CC432bC2eb57331d2cC51e9E2898E0e0",
   signature: "",
   error: "",
   transactionDetails: iniTransactionDetails,

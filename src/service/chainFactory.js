@@ -1,8 +1,8 @@
-import { bridge } from "../bridge";
+import { bridge } from "./bridge";
 import { ChainNonce } from "xpjs-erc20";
 
-import EVM from "./evm";
-import Algorand, { getMyAlgoSigner } from "./algorand";
+import EVM from "./chains/evm";
+import Algorand, { getMyAlgoSigner } from "./chains/algorand";
 
 import { ethers } from "ethers";
 
@@ -51,15 +51,14 @@ class ChainFabric {
   };
 }
 
-false &&
-  (async () => {
-    const cf = new ChainFabric();
+(async () => {
+  const cf = new ChainFabric();
 
-    const chain = await cf.init(bridge).getChain(2);
+  const chain = await cf.init(bridge).getChain(5);
 
-    const fees = await chain.preTransfer(1);
+  const fees = await chain.preTransfer(1);
 
-    console.log(fees);
-  })();
+  console.log(fees);
+})();
 
 export default () => new ChainFabric();

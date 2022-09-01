@@ -19,7 +19,14 @@ import { useSelector } from "react-redux";
 
 import { parentAccountChange, inIframe } from "./utils/utilsFunc";
 
-import factory from "./service/chains";
+import factory from "./service/chainFactory";
+
+import { TransferContainer } from "./components/containers/Transfer";
+
+const Test = (props) => {
+  console.log(props);
+  return <div>1</div>;
+};
 
 function App() {
   const dispatch = useDispatch();
@@ -35,7 +42,7 @@ function App() {
       document.body.style.background = "#f7f7f9";
     }
 
-    navigate("/");
+    //navigate("/");
 
     return () => window.removeEventListener("message", parentAccountChange);
   }, []);
@@ -44,11 +51,14 @@ function App() {
     account && dispatch(connectedAccount(account));
   }, [account]);
 
+  const Comp = TransferContainer(Test);
+
   return (
     <div className="App">
       <div className="flexColumn">
         <Routes>
           <Route path="/" element={<Connect />} />
+          <Route path="/test" element={<Comp />} />
           <Route path="/Transfer" element={<Transfer from={""} to={""} />} />
           <Route path="/BridgingConfirmation" element={<Confirmation />} />
           <Route path="/BridgingReport" element={<Report />} />
