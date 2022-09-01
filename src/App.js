@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 
 import { parentAccountChange, inIframe } from "./utils/utilsFunc";
 
-import chain from "./service/chain";
+import factory from "./service/chains";
 
 function App() {
   const dispatch = useDispatch();
@@ -30,7 +30,11 @@ function App() {
   const { error } = useSelector((state) => ({ error: state.account.error }));
 
   useEffect(() => {
-    inIframe() && window.addEventListener("message", parentAccountChange);
+    if (inIframe()) {
+      window.addEventListener("message", parentAccountChange);
+      document.body.style.background = "#f7f7f9";
+    }
+
     navigate("/");
 
     return () => window.removeEventListener("message", parentAccountChange);

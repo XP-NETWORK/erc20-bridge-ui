@@ -135,9 +135,8 @@ export const transfer = async (
   console.log(signer, "signer");
   console.log(fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID);
   console.log(amountBigNumber, "amountBigNumber");
-
-  let transfer = await bridge
-    .transferTokens(
+  try {
+    let transfer = await bridge.transferTokens(
       nonceSender,
       signer,
       fromChain === CHAINS_TYPE.BSC ? CONTRACT_ADDRESS : ASSET_ID,
@@ -145,21 +144,19 @@ export const transfer = async (
       amountBigNumber,
       destAddress,
       fee
-    )
-    .catch((e) => {
-      if (e?.message?.includes("must opt in to asset")) {
-        throw new Error(
-          `Please add asset ${e?.message?.replace(
-            /[^0-9]/g,
-            ""
-          )} to Algo wallet`
-        );
-      }
-      throw e;
-    });
-  console.log(transfer, "transfer");
+    );
 
-  return transfer;
+    console.log(transfer, "transfer");
+
+    return transfer;
+  } catch (e) {
+    if (e?.message?.includes("must opt in to asset")) {
+      throw new Error(
+        `Please add asset ${e?.message?.replace(/[^0-9]/g, "")} to Algo wallet`
+      );
+    }
+    throw e;
+  }
 };
 
 export const getFeeBscToAlgo = async () => {
@@ -253,8 +250,8 @@ export const getAlgoData = async (account, fromChain) => {
         if (algoSymbol) return algoSymbol;
         const res = await bridge.tokenParams(nonceSender, ASSET_ID);
 
-        algoSymbol = res.name;
-        return res.name;
+        algoSymbol = res.symbol;
+        return res.symbol;
       })(),
 
       (async () => {

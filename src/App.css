@@ -183,6 +183,18 @@ span.errorNotif {
   text-align: right;
 }
 
+.optInBtn {
+  margin-top: 15px;
+  width: 150px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: unset;
+}
+
+.optInBtn:hover {
+  filter: brightness(85%);
+}
+
 .reportAddres {
   width: 252px;
   flex: 0 0 auto;

@@ -16988,7 +16988,7 @@ xmlhttprequest@*, xmlhttprequest@1.8.0:
 
 "xpjs-erc20@git+https://github.com/XP-NETWORK/xpjs-erc20#master-dist":
   version "0.0.1"
-  resolved "git+https://github.com/XP-NETWORK/xpjs-erc20#c28069ef8dff4a528ae63e4c046e3b4f82f932cd"
+  resolved "git+https://github.com/XP-NETWORK/xpjs-erc20#cae90a0679529d6e1387fecff2a103a743388305"
   dependencies:
     "@randlabs/myalgo-connect" "^1.2.0"
     algosdk "^1.19.0"
