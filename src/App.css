@@ -1,385 +1,391 @@
 html {
-  overflow: hidden;
-  height: 100%;
+    overflow: hidden;
+    height: 100%;
 }
 
 body {
-  height: 100%;
-  overflow: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 .App {
-  text-align: center;
+    text-align: center;
 }
-
+.connect-body-modal {
+    width: 465px;
+    height: 614px;
+    background-color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+}
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 .wraperConfirm {
-  width: 400px;
+    width: 400px;
 }
 
 .transferBox {
-  position: relative;
+    position: relative;
 }
 
 .transferBox.transfer,
 .transferBox.confirm,
 .transferBox.report {
-  -webkit-animation: fadein 2s;
-  -moz-animation: fadein 2s;
-  -ms-animation: fadein 2s;
-  -o-animation: fadein 2s;
-  animation: fadein 2s;
+    -webkit-animation: fadein 2s;
+    -moz-animation: fadein 2s;
+    -ms-animation: fadein 2s;
+    -o-animation: fadein 2s;
+    animation: fadein 2s;
 }
 
 .transferBoxTitle img {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .errorPopup {
-  height: unset;
+    height: unset;
 }
 
 .errorPopup .closePopup {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
 }
 
 .errorPopup h1 {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 .errorPopup .closePopup:hover {
-  filter: brightness(111%);
+    filter: brightness(111%);
 }
 
 .notifsBlock {
-  position: fixed;
-  left: 20px;
-  top: 20px;
-  width: 20%; /*media*/
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 20%; /*media*/
 }
 
 .icontext,
 .xpnetAmount,
 .amountLabel {
-  filter: blur(0);
-  transition: filter 1.5s ease;
+    filter: blur(0);
+    transition: filter 1.5s ease;
 }
 
 .withLoaderContainer {
-  min-width: 100px;
-  height: 30px;
+    min-width: 100px;
+    height: 30px;
 }
 
 .feesContainer label {
-  margin-left: auto;
+    margin-left: auto;
 }
 
 .icontext.blury,
 .xpnetAmount.blury,
 .amountLabel.blury {
-  filter: blur(3px);
+    filter: blur(3px);
 }
 
 .notifsBlock .addressError {
-  width: 100%;
-  margin-top: 10px;
-  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: fadein 2s; /* Firefox < 16 */
-  -ms-animation: fadein 2s; /* Internet Explorer */
-  -o-animation: fadein 2s; /* Opera < 12.1 */
-  animation: fadein 2s;
+    width: 100%;
+    margin-top: 10px;
+    -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
+    -moz-animation: fadein 2s; /* Firefox < 16 */
+    -ms-animation: fadein 2s; /* Internet Explorer */
+    -o-animation: fadein 2s; /* Opera < 12.1 */
+    animation: fadein 2s;
 }
 
 .walletsWrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .walletItem span {
-  font-size: 15px;
-  font-family: Inter;
-  position: relative;
-  top: -30px;
+    font-size: 15px;
+    font-family: Inter;
+    position: relative;
+    top: -30px;
 }
 
 .Divgap .flexRow.mtT32 {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .connectYourWalletBtn.mt40 {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 
 .feesContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .feesContainer span {
-  color: #62718a;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 19px;
+    color: #62718a;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19px;
 }
 
 .insufficient {
-  color: red;
-  position: relative;
+    color: red;
+    position: relative;
 }
 
 .failedTrx {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .failedTrx span {
-  color: rgb(255, 0, 85);
-  font-size: 12px;
-  margin-right: 7px;
+    color: rgb(255, 0, 85);
+    font-size: 12px;
+    margin-right: 7px;
 }
 
 .btnContainer {
-  padding-top: 20px;
+    padding-top: 20px;
 }
 
 .connectYourWalletBtn {
-  width: 100%;
+    width: 100%;
 }
 
 .wraperConfirm .flexColumn {
-  grid-gap: 25px;
+    grid-gap: 25px;
 }
 
 .flexRow.fees {
-  margin-top: 8px;
+    margin-top: 8px;
 }
 
 .secureLabel {
-  margin: 10px auto 10px auto;
-  display: flex;
-  justify-content: center;
+    margin: 10px auto 10px auto;
+    display: flex;
+    justify-content: center;
 }
 
 span.errorNotif {
-  display: none;
-  color: red;
-  font-size: 12px;
-  position: absolute;
-  bottom: -19px;
-  right: 0;
-  font-style: italic;
-  width: 120px;
-  text-align: right;
+    display: none;
+    color: red;
+    font-size: 12px;
+    position: absolute;
+    bottom: -19px;
+    right: 0;
+    font-style: italic;
+    width: 120px;
+    text-align: right;
 }
 
 .optInBtn {
-  margin-top: 15px;
-  width: 150px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  height: unset;
+    margin-top: 15px;
+    width: 150px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: unset;
 }
 
 .optInBtn:hover {
-  filter: brightness(85%);
+    filter: brightness(85%);
 }
 
 .reportAddres {
-  width: 252px;
-  flex: 0 0 auto;
-  justify-content: space-around;
+    width: 252px;
+    flex: 0 0 auto;
+    justify-content: space-around;
 }
 
 .reportAddres button {
-  padding-right: 0;
+    padding-right: 0;
 }
 
 .insufficient span.errorNotif {
-  display: inline;
+    display: inline;
 }
 
 .flexRow {
-  position: relative;
+    position: relative;
 }
 
 .swapBtn1 {
-  position: absolute;
-  right: 50%;
-  transform: translateX(50%);
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
 }
 
 .transferBox {
-  padding-bottom: 15px;
+    padding-bottom: 15px;
 }
 
 .lds-ellipsis {
-  display: inline-block;
-  position: relative;
-  width: 30px;
-  height: 30px;
-  transform: scale(0.4);
+    display: inline-block;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    transform: scale(0.4);
 }
 .lds-ellipsis div {
-  position: absolute;
-  top: 13px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background: rgb(131, 129, 129);
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    position: absolute;
+    top: 13px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: rgb(131, 129, 129);
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {
-  left: 8px;
-  animation: lds-ellipsis1 0.6s infinite;
+    left: 8px;
+    animation: lds-ellipsis1 0.6s infinite;
 }
 .lds-ellipsis div:nth-child(2) {
-  left: 8px;
-  animation: lds-ellipsis2 0.6s infinite;
+    left: 8px;
+    animation: lds-ellipsis2 0.6s infinite;
 }
 .lds-ellipsis div:nth-child(3) {
-  left: 32px;
-  animation: lds-ellipsis2 0.6s infinite;
+    left: 32px;
+    animation: lds-ellipsis2 0.6s infinite;
 }
 .lds-ellipsis div:nth-child(4) {
-  left: 56px;
-  animation: lds-ellipsis3 0.6s infinite;
+    left: 56px;
+    animation: lds-ellipsis3 0.6s infinite;
 }
 @keyframes lds-ellipsis1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 @keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
 }
 @keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(24px, 0);
+    }
 }
 
 @keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .btnWallet {
-  box-shadow: none;
-  transition: 0.5s ease;
-  margin: 4px 0;
+    box-shadow: none;
+    transition: 0.5s ease;
+    margin: 4px 0;
 }
 
 .btnWallet:hover {
-  box-shadow: rgb(100 100 111 / 20%) 2px 7px 21px 2px;
+    box-shadow: rgb(100 100 111 / 20%) 2px 7px 21px 2px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 a.accountAddressLabel {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .connectWalletRow {
-  justify-content: flex-start;
+    justify-content: flex-start;
 }
 
 .connectWalletLabel {
-  margin: 0 auto;
+    margin: 0 auto;
 }
 
 .navBtn {
-  padding-left: 0;
+    padding-left: 0;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Small devices (landscape phones, 576px and up)*/
 @media (max-width: 576px) {
-  html,
-  #root {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-  }
+    html,
+    #root {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+    }
 
-  .flexColumn {
-    margin: auto 0;
-  }
+    .flexColumn {
+        margin: auto 0;
+    }
 
-  .transferBox {
-    margin-top: 0;
-  }
+    .transferBox {
+        margin-top: 0;
+    }
 
-  .transferBox {
-  }
+    .transferBox {
+    }
 
-  .App {
-    padding-left: 0;
-    padding-right: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
+    .App {
+        padding-left: 0;
+        padding-right: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
-  .wraperConfirm {
-    width: 90vw;
-  }
+    .wraperConfirm {
+        width: 90vw;
+    }
 
-  .errorPopup,
-  .wraperPopup.error {
-    width: 90%;
-  }
+    .errorPopup,
+    .wraperPopup.error {
+        width: 90%;
+    }
 }
 
 /* Medium devices (tablets, 768px and up)*/
