@@ -244,6 +244,14 @@ code {
   width: 50px;
 }
 
+.walletList .closePopup {
+  position: absolute;
+  z-index: 9999;
+  right: 15px;
+  top: 15px;
+  cursor: pointer;
+}
+
 .transferBox {
   display: flex;
   flex-direction: column;
@@ -256,12 +264,23 @@ code {
   background-color: #ffffff;
   border: 2px solid #ffffff;
   border-radius: 20px;
-  margin-top: 80px;
+}
+
+#footer {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+
+.transferBox {
+  position: relative;
+  z-index: 12;
 }
 
 .wraper {
-  padding: 10px;
-  width: 380px;
+  padding: 10px 0;
+  width: 420px;
   margin: 0 auto;
   justify-self: center;
   display: flex;
@@ -273,7 +292,7 @@ code {
 
 .wraperConfirm {
   padding: 10px;
-  width: 380px;
+  width: 420px;
   margin: 0 auto;
   justify-self: center;
   display: flex;
@@ -283,12 +302,25 @@ code {
 }
 
 .walletItem {
-  width: 100%;
-  background: #f9f9fb;
+  align-items: center;
+  background-color: #ffffff50;
+  border: 1px solid #fff;
+  border-radius: 86px;
+  box-shadow: 0 1px 6px #b4b9c740;
+  box-sizing: border-box;
+  color: #14161a;
   text-align: center;
   cursor: pointer;
-  margin: 5px 0;
-  border-radius: 7px;
+  display: flex;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  height: 56px;
+  line-height: 160%;
+  margin-bottom: 12px;
+  padding: 10px 16px;
+  position: relative;
+  width: 100%;
 }
 
 .walletItem:hover {
@@ -296,35 +328,19 @@ code {
 }
 
 .btnWallet {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 16px;
-  gap: 12px;
-  width: auto;
-  height: 196.07px;
-  background: #f9f9fb;
-  border: 1px solid #ffffff;
-  box-shadow: 0px 1px 16px rgba(180, 185, 199, 0.25);
-  border-radius: 20px;
+  width: 30px;
+  height: 30px;
 }
 
 .transferBoxTitle {
   /* width: 450px;
   height: 76px; */
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 32px;
-  line-height: 120%;
-  display: flex;
-  align-items: center;
-  text-align: center;
+  font-family: "Inter";
   color: #14161a;
-  margin-top: 20px;
-  align-self: center;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 27px;
+  margin-bottom: 30px;
 }
 
 .amountLabel {
@@ -386,7 +402,7 @@ code {
   padding: 22px 18px 20px;
   gap: 12px;
 
-  width: 380px;
+  width: 100%;
   height: 56px;
 
   background: #ececf1;
@@ -713,11 +729,8 @@ button {
 }
 
 .backgroundLoaders {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(64px);
-  opacity: 0.8;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   top: 0;
   left: 0;
   position: absolute;
@@ -759,16 +772,15 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 0px 40px;
   opacity: 1 !important;
   position: absolute;
   width: 475px;
-  height: 532px;
   background: #ffffff !important;
   border: 1px solid #ffffff;
   box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.14);
   border-radius: 20px;
   position: absolute;
+  z-index: 999;
   left: 50%;
   top: 42%;
   -moz-transform: translate(-50%, -50%); /* Firefox */
@@ -779,6 +791,10 @@ button {
   gap: 10px;
   backdrop-filter: unset !important;
   opacity: unset !important;
+}
+
+.wraperPopup.errorPopup {
+  z-index: 1000;
 }
 
 .closeError {
@@ -801,7 +817,32 @@ button {
   margin-top: 40px;
 }
 
+@media only screen and (max-width: 1520px) {
+  .mtT50 {
+    margin-top: 0px;
+  }
+
+  .Divgap .flexRow.mtT32 {
+    margin-top: 0px !important;
+  }
+
+  .footerlogos img {
+    width: 120px;
+  }
+
+  .transferBox {
+    padding-bottom: 0;
+  }
+}
+
 @media only screen and (max-width: 700px) {
+  .footerlogos {
+    display: none;
+  }
+
+  .wraperPopup {
+    width: 95%;
+  }
   .transferBox {
     width: 95vw;
     height: auto;
@@ -898,9 +939,7 @@ button {
   }
 
   .btnWallet {
-    width: 80vw;
     align-self: center;
-    height: 196.07px;
   }
   .mtT50 {
     margin-top: 30px;

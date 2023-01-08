@@ -2,21 +2,24 @@ import React, { useEffect, useState } from "react";
 import metaIcon from "../img/wallets/metamask.svg";
 import MyAlgoIcon from "../img/myalgo-logo.svg";
 import algoSigner from "../img/wallets/Algo Signer.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useWeb3React } from "@web3-react/core";
 import {
   connectedAccount,
   updateTransactionDetails,
   iniTransactionDetails,
+  setSigner,
+  setError,
 } from "../store/accountSlice";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { InjectedMetaMask } from "../utils/connectors";
 import { useNavigate } from "react-router-dom";
-import { checkIfOptIn, getFees } from "../erc20/erc20Utils";
-import OptInPopup from "./errors/OptInPopup";
+
 import Error from "./errors/Error";
 import { CHAINS_TYPE } from "../utils/consts";
 import { useLocation } from "react-router";
+import { ethers } from "ethers";
+import { getMyAlgoSigner } from "../erc20/erc20Utils";
 
 export const connectAlgo = async () => {
   const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
@@ -34,53 +37,71 @@ export const connectAlgo = async () => {
   return accountsSharedByUser;
 };
 
-export const connectMM = async (activate, acc) => {
-  console.log("grisha boris");
+export const connectMM = async () => {
   if (!window.ethereum) {
     alert("Install metaMask");
     return;
   }
   try {
-    await activate(acc);
     await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: "0x38" }], // chainId must be in hexadecimal numbers
+      method: "wallet_requestPermissions",
+      params: [
+        {
+          eth_accounts: {},
+        },
+      ],
     });
+    const [currentChain, accounts] = await Promise.all([
+      window.ethereum.request({ method: "eth_chainId" }),
+      window.ethereum.request({ method: "eth_requestAccounts" }),
+    ]);
+    let provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    return {
+      signer: provider.getSigner(),
+      chainId: currentChain,
+      address: accounts[0],
+    };
   } catch (e) {
     throw e;
   }
 };
 
-export default function Connect() {
-  const { ethereum } = window;
+export function connectAlgoSigner(address, dispatch) {
+  const signer = {
+    address,
+    algoSigner: window.AlgoSigner,
+    ledger: "MainNet",
+  };
+
+  dispatch(connectedAccount(address));
+  dispatch(setSigner(signer));
+  dispatch(
+    updateTransactionDetails({
+      ...iniTransactionDetails,
+      fromChain: CHAINS_TYPE.Algorand,
+      toChain: CHAINS_TYPE.BSC,
+    })
+  );
+}
+
+export default function Connect({
+  onConnect,
+  cb,
+  wallets = {
+    metaMask: true,
+    myAlgo: true,
+    algoSigner: true,
+  },
+}) {
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [isMetaConnected, setIsMetaConnected] = useState(false);
-  const { activate, account, chainId, library, active } = useWeb3React();
-  const [showMetaWallet, setShowMetaWallet] = useState(true);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const loc = useLocation();
-
-  useEffect(() => {
-    if (isMetaConnected) {
-      const requestAccount = async () => {
-        await window.ethereum.send("eth_requestAccounts");
-      };
-      requestAccount().catch(console.error);
-    }
-
-    dispatch(connectedAccount(account));
-  }, [account]);
-
-  useEffect(() => {
-    if (!ethereum && window.innerWidth > 600) {
-      console.log("please install MetaMask");
-      setShowMetaWallet(false);
-    }
-  }, []);
+  const { fromChain } = useSelector((state) => ({
+    fromChain: state.account.transactionDetails.fromChain,
+  }));
 
   const connectMetaMaskWalletHandler = async () => {
     try {
@@ -90,14 +111,27 @@ export default function Connect() {
         return;
       }
 
-      await connectMM(activate, InjectedMetaMask);
+      const { signer, address } = await connectMM();
 
+      dispatch(connectedAccount(address));
+      dispatch(setSigner(signer));
+      dispatch(
+        updateTransactionDetails({
+          ...iniTransactionDetails,
+          fromChain: CHAINS_TYPE.BSC,
+          toChain: CHAINS_TYPE.Algorand,
+        })
+      );
+
+      onConnect();
       // handleCloseWallet();
-      navigate("/Transfer");
     } catch (err) {
-      console.log(err);
-      setErrorMsg("connection to wallet failed, please try again");
-      setShowError(true);
+      console.log(err, "err");
+      dispatch(
+        setError({
+          data: "Connection to wallet failed, please try again",
+        })
+      );
     }
   };
 
@@ -105,9 +139,12 @@ export default function Connect() {
     //const myAlgoConnect = new MyAlgoConnect({ disableLedgerNano: false });
     try {
       const accountsSharedByUser = await connectAlgo();
+      const address = accountsSharedByUser[0]?.address;
+      if (address) {
+        const signer = await getMyAlgoSigner(address);
 
-      if (accountsSharedByUser[0]?.address) {
         dispatch(connectedAccount(accountsSharedByUser[0].address));
+        dispatch(setSigner(signer));
         dispatch(
           updateTransactionDetails({
             ...iniTransactionDetails,
@@ -115,14 +152,15 @@ export default function Connect() {
             toChain: CHAINS_TYPE.BSC,
           })
         );
-        navigate("/Transfer");
       }
-
+      onConnect();
       //heckIfOptIn(accountsSharedByUser[0].address);
     } catch (e) {
-      console.log(e);
-      setErrorMsg("connection to wallet failed, please try again");
-      setShowError(true);
+      dispatch(
+        setError({
+          data: "Connection to wallet failed, please try again",
+        })
+      );
     }
     // handleCloseWallet();
   };
@@ -131,18 +169,21 @@ export default function Connect() {
     if (typeof window.AlgoSigner !== undefined) {
       try {
         await window.AlgoSigner.connect();
+
         const algo = await window.AlgoSigner.accounts({
-          ledger: testnet ? "TestNet" : "MainNet",
+          ledger: "MainNet",
         });
+
+        if (algo.length > 1) {
+          return dispatch(
+            setError({
+              type: "selectWallet",
+              data: algo,
+            })
+          );
+        }
         const { address } = algo[0];
-
-        const signer = {
-          address,
-          algoSigner: window.AlgoSigner,
-          ledger: testnet ? "TestNet" : "MainNet",
-        };
-
-        dispatch(connectedAccount(address));
+        connectAlgoSigner(address, dispatch);
         dispatch(
           updateTransactionDetails({
             ...iniTransactionDetails,
@@ -150,7 +191,7 @@ export default function Connect() {
             toChain: CHAINS_TYPE.BSC,
           })
         );
-        navigate("/Transfer");
+        onConnect();
       } catch (e) {
         console.error(e);
         return JSON.stringify(e, null, 2);
@@ -173,35 +214,44 @@ export default function Connect() {
     <div className="flexColumn">
       <div className="transferBox">
         <div className="wraper">
-          <h1 className="transferBoxTitle">
-            Transfer asset <br />
-            between blockchains
-          </h1>
+          <h1 className="transferBoxTitle">Connect Wallet</h1>
           <div className="walletsWrapper">
-            <div className="walletItem">
-              <img
-                src={metaIcon}
-                className="btnWallet"
-                onClick={connectMetaMaskWalletHandler}
-              />
-              <span>MetaMask</span>
-            </div>
-            <div className="walletItem">
-              <img
-                src={MyAlgoIcon}
-                className="btnWallet"
-                onClick={connectMyAlgoHandler}
-              />
-              <span>MyAlgo</span>
-            </div>
-            <div className="walletItem">
-              <img
-                src={algoSigner}
-                className="btnWallet"
-                onClick={connectAlgoSigner}
-              />
-              <span>AlgoSigner</span>
-            </div>
+            {wallets.metaMask && (
+              <div
+                className="walletItem"
+                onClick={() => {
+                  cb && cb();
+                  connectMetaMaskWalletHandler();
+                }}
+              >
+                <img src={metaIcon} className="btnWallet" />
+                <span>MetaMask</span>
+              </div>
+            )}
+            {wallets.myAlgo && fromChain !== CHAINS_TYPE.Algorand && (
+              <div
+                className="walletItem"
+                onClick={() => {
+                  cb && cb();
+                  connectMyAlgoHandler();
+                }}
+              >
+                <img src={MyAlgoIcon} className="btnWallet" />
+                <span>MyAlgo</span>
+              </div>
+            )}
+            {wallets.algoSigner && fromChain !== CHAINS_TYPE.Algorand && (
+              <div
+                className="walletItem"
+                onClick={() => {
+                  cb && cb();
+                  connectAlgoSigner();
+                }}
+              >
+                <img src={algoSigner} className="btnWallet" />
+                <span>AlgoSigner</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

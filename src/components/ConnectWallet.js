@@ -94,7 +94,10 @@ export default function ConnectWallet(props) {
       <div className="background"></div>
       <div className="connectWalletCompDiv">
         <div className="connectWalletRow">
-          <label className="connectWalletLabel selfCenter">
+          <label
+            className="connectWalletLabel selfCenter"
+            onClick={() => console.log("Connect Wallet")}
+          >
             Connect Wallet
           </label>
           <button className="navBtn" onClick={handleCloseWallet}>

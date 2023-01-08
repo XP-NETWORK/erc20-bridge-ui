@@ -45,6 +45,7 @@ export default function Confirmation() {
   const [recievingValueInDollar, setRecievingValueInDollar] = useState(0);
   const transaction = useSelector((state) => state.account.transactionDetails);
   const address = useSelector((state) => state.account.address);
+  const signer = useSelector((state) => state.account.signer);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -74,17 +75,24 @@ export default function Confirmation() {
     if (!approveTransaction) {
       setShowApprovalLoader(true);
       try {
-        pretransfer = await preTransfer(
+        await preTransfer(
           transaction.fromChain,
           transaction.xpnetAmount,
-          address
+          address,
+          signer
         );
 
         setApproveTransaction(true);
       } catch (e) {
         console.log(e, "approval");
         setApproveTransaction(false);
-        dispatch(setError(e.message));
+
+        dispatch(
+          setError({
+            type: e.message?.includes("Please add asset") ? "optin" : undefined,
+            data: e.message,
+          })
+        );
       }
       setShowApprovalLoader(false);
     }
@@ -113,7 +121,8 @@ export default function Confirmation() {
           transaction.toChain,
           transaction.xpnetAmount,
           transaction.destinationAddress,
-          address
+          address,
+          signer
         );
         dispatch(updateHash(sourceHash));
         navigate(`/BridgingReport`);
@@ -126,7 +135,12 @@ export default function Confirmation() {
           await sendTransaction();
         }
         setShowTransferLoader(false);
-        dispatch(setError(e.message));
+        dispatch(
+          setError({
+            type: e.message?.includes("Please add asset") ? "optin" : undefined,
+            data: e.message,
+          })
+        );
       }
 
       //navigate("/BridgingReport");
@@ -148,7 +162,7 @@ export default function Confirmation() {
         <div className="transferBox confirm">
           <div className="wraperConfirm">
             <div className="connectWalletRow noMargin">
-              <Link to="/Transfer" className="navBtn" style={{ margin: "0px" }}>
+              <Link to="/" className="navBtn" style={{ margin: "0px" }}>
                 <img src={backIcon}></img>
               </Link>
               <span className="connectWalletLabel">Bridging confirmation</span>

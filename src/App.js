@@ -10,9 +10,11 @@ import { Routes, Route } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
-import { connectedAccount } from "./store/accountSlice";
+import { connectedAccount, setError } from "./store/accountSlice";
 import Connect from "./components/Connect";
 
+import NavBar from "./components/views/NavBar";
+import { BotFooter } from "./components/views/Footer";
 import ErrorPopup from "./components/errors/ErrorPopup";
 
 import { useNavigate } from "react-router";
@@ -22,8 +24,9 @@ import { parentAccountChange, inIframe } from "./utils/utilsFunc";
 
 import factory from "./service/chainFactory";
 
-//import { TransferContainer } from "./components/containers/Transfer";
-import ConnectBody from "./components/modals/ConnectBody";
+import { TransferContainer } from "./components/containers/Transfer";
+
+import { Popup } from "./components/popup";
 
 function ConnectModal({ children }) {
   const modalRoot = document.querySelector("#connect-modal");
@@ -49,7 +52,7 @@ const Test = (props) => {
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const connectModal = useSelector((state) => state.account.connectModal);
+  const popup = useSelector((state) => state.account.popup);
 
   const { account } = useWeb3React();
 
@@ -70,26 +73,28 @@ function App() {
     account && dispatch(connectedAccount(account));
   }, [account]);
 
-  //const Comp = TransferContainer(Test);
+  const Comp = TransferContainer(Test);
+
+  const isMob = window.innerWidth <= 800;
 
   return (
-    <div className="App">
-      {/* <div id="connect-modal"></div>
-            {connectModal && (
-                <ConnectModal>
-                    <ConnectBody />
-                </ConnectModal>
-            )} */}
-      <div className="flexColumn">
-        <Routes>
-          <Route path="/" element={<Connect />} />
-          {/*      <Route path="/test" element={<Comp />} />*/}
-          <Route path="/Transfer" element={<Transfer from={""} to={""} />} />
-          <Route path="/BridgingConfirmation" element={<Confirmation />} />
-          <Route path="/BridgingReport" element={<Report />} />
-        </Routes>
-        {error && <ErrorPopup errorMgs={error} />}
-        <Footer />
+    <div className="container">
+      <div className="row">
+        <div className="App">
+          <NavBar />
+          <div className="flexColumn">
+            <Routes>
+              <Route path="/test" element={<Comp />} />
+              <Route path="/" element={<Transfer from={""} to={""} />} />
+              <Route path="/BridgingConfirmation" element={<Confirmation />} />
+              <Route path="/BridgingReport" element={<Report />} />
+            </Routes>
+            {error && <ErrorPopup errorObject={error} />}
+            {popup && <Popup popup={popup} />}
+            {!isMob && <Footer />}
+          </div>
+          <BotFooter />
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import BigNumber from "bignumber.js";
-import { ethers, BigNumber as BN } from "ethers";
+import { ethers } from "ethers";
 import {
   ASSET_ID,
   CHAINS_TYPE,
@@ -56,17 +56,10 @@ export const bridge = erc20MultiBridge(
   }
 );
 
-export const preTransfer = async (fromChain, amount, address) => {
+export const preTransfer = async (fromChain, amount, address, signerClient) => {
   let nonceSender =
     fromChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
-  let signer;
-
-  if (fromChain === CHAINS_TYPE.BSC) {
-    let provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
-  } else {
-    signer = await getMyAlgoSigner(address);
-  }
+  let signer = signerClient;
 
   console.log("signer", signer);
   let divideBy = ChainInfo[nonceSender].decimals;
@@ -96,7 +89,8 @@ export const transfer = async (
   toChain,
   amount,
   destAddress,
-  address
+  address,
+  signerClient
 ) => {
   console.log("fromChain", fromChain);
   console.log("toChain", toChain);
@@ -109,14 +103,9 @@ export const transfer = async (
     toChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
   let nonceSender =
     fromChain === CHAINS_TYPE.BSC ? ChainNonce.BSC : ChainNonce.Algorand;
-  let signer;
+  let signer = signerClient;
 
-  if (fromChain === CHAINS_TYPE.BSC) {
-    let provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = provider.getSigner();
-  } else {
-    signer = await getMyAlgoSigner(address);
-  }
+  console.log(signer, "signer");
 
   let fee = await bridge.estimateFees(
     nonceSender,
@@ -159,9 +148,8 @@ export const transfer = async (
   }
 };
 
-export const getFeeBscToAlgo = async () => {
-  const provider =
-    window.ethereum && new ethers.providers.Web3Provider(window.ethereum);
+export const getFeeBscToAlgo = async (signer) => {
+  const provider = signer.provider;
 
   let fee = await bridge.estimateFees(
     ChainNonce.BSC,

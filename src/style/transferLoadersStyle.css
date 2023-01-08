@@ -48,6 +48,7 @@
 }
 
 .transfer-loader__text {
+  max-width: 350px;
   text-align: center;
   padding-bottom: 30px;
 }

@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Bridge__factory } from "web3-erc20-contracts-types";
 import BigNumber from "bignumber.js";
 import { JsonRpcProvider, WebSocketProvider } from "@ethersproject/providers";
-import { APPLICATION_ID, BSC_NODE } from "../utils/consts";
+import { APPLICATION_ID, BSC_NODE, randomRpcUrl } from "../utils/consts";
 
 import { provider } from "../erc20/provider";
 
@@ -208,25 +208,27 @@ class TransactionWatcher {
 
   listenEvmUnfreeze(depActionId, destinationAddress, interavalCb) {
     return new Promise(async (resolve, reject) => {
-      const contract = Bridge__factory.connect(
-        "0x91105e661C500e6651f04CF76787297e534b97a5",
-        this.provider
-      );
-
       const fna = async () => {
         const block = await this.provider.getBlockNumber();
+        console.log(block, "block");
 
-        const logs = await this.provider.getLogs({
-          address: "0x8cf8238abf7b933bf8bb5ea2c7e4be101c11de2a",
-          toBlock: block,
-          fromBlock: block - 20, //block - 100,
-          topics: [
-            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-            "0x00000000000000000000000091105e661c500e6651f04cf76787297e534b97a5",
-            `0x000000000000000000000000${destinationAddress.substr(2)}`,
-          ],
-        });
+        //await new Promise((r) => setTimeout(r, 5000));
 
+        const logs = await this.provider
+          .getLogs({
+            address: "0x8cf8238abf7b933bf8bb5ea2c7e4be101c11de2a",
+            toBlock: block,
+            fromBlock: block - 20, //block - 100,
+            topics: [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x00000000000000000000000091105e661c500e6651f04cf76787297e534b97a5",
+              `0x000000000000000000000000${destinationAddress.substr(2)}`,
+            ],
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+        //limit exceeded
         console.log(depActionId, "depActionId");
         console.log(logs);
         if (logs.length) {

@@ -1,25 +1,26 @@
 import React, { useEffect, useState, useRef } from "react";
 
-import walletIcon from "../img/wallet.svg";
-import xpnetIcon from "../img/XPNET.svg";
-import bscIcon from "../img/BSC.svg";
-import algorandIcon from "../img/Algorand.svg";
-import secureIcon from "../img/secure tx.svg";
-import swapIcon from "../img/swap  default.svg";
+import walletIcon from "../../img/wallet.svg";
+import xpnetIcon from "../../img/XPNET.svg";
+import bscIcon from "../../img/BSC.svg";
+import algorandIcon from "../../img/Algorand.svg";
+import secureIcon from "../../img/secure tx.svg";
+import swapIcon from "../../img/swap  default.svg";
 
-import AddressError from "./errors/AddressError";
+//import AddressError from "./errors/AddressError";
 // import ConnectWallet from "./ConnectWallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {} from "../store/accountSlice";
-import Web3 from "web3";
-import { BSC, CHAINS_TYPE } from "../utils/consts";
-import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
 
-import AmountError from "./errors/AmountError";
+import Web3 from "web3";
+import { BSC, CHAINS_TYPE } from "../../utils/consts";
+import { cutDigitAfterDot, numberWithCommas } from "../../utils/utilsFunc";
+
+/*import AmountError from "./errors/AmountError";
 import WrongAddressError from "./errors/WrongAddressError";
-import AmountZeroError from "./errors/AmountZeroError";
-import { Loader } from "./loaders/Loader";
+import AmountZeroError from "./errors/AmountZeroError";*/
+import { Loader } from "../loaders/Loader";
+import Errors from "../Errors";
 
 function Transfer({ data, handlers, transaction, errors, loaders }) {
   const { balance, tokenBalance } = data;
@@ -36,8 +37,11 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
     destinationAddress,
     tokenSymbol: symbol,
     fee: fees,
+    xpnetAmount,
   } = transaction;
+
   const { amountError, wrongAddressError, insufficient } = errors;
+
   const { blury, loadingFees } = loaders;
 
   return (
@@ -54,7 +58,7 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
               <label className="flexRow" style={{ width: "auto", gap: "5px" }}>
                 <img src={walletIcon} />
                 <label className={`xpnetAmount ${blury ? "blury" : ""}`}>
-                  {numberWithCommas(balance)} {symbol}
+                  {numberWithCommas(tokenBalance)} {symbol}
                 </label>
                 <button className="maxLabel" onClick={handleMaxAmount}>
                   MAX
@@ -74,7 +78,7 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
                       : "textXpAmount"
                   }
                   type="text"
-                  placeholder={tokenBalance}
+                  placeholder={xpnetAmount}
                   // min={0}
                   // max={10000000000}
                   onFocus={
@@ -82,7 +86,7 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
                     //tokenBalance == 0 ? setXpnetTokenAmount("") : null
                   }
                   onChange={handleTokenAmountChange}
-                  value={tokenBalance}
+                  value={xpnetAmount}
                 />
                 <label className={`icontext ${blury ? "blury" : ""}`}>
                   <img src={xpnetIcon} />
@@ -135,10 +139,10 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
               </div>
               <div className="flexRow mtT32">
                 <label className="amountLabel">Fee:</label>
-                <div className="feesContainer">
-                  <span>Balance: {balance}</span>
-                  <div className="withLoaderContainer">
-                    {!loadingFees ? (
+                {!loadingFees ? (
+                  <div className="feesContainer">
+                    <span>Balance: {cutDigitAfterDot(balance, 6)}</span>
+                    <div className="withLoaderContainer">
                       <label
                         className={`amountLabel flexRow ${
                           loadingFees ? "blury" : ""
@@ -148,11 +152,11 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
                         {fees === 0 ? 0 : cutDigitAfterDot(fees, 10)}{" "}
                         {fromChain === CHAINS_TYPE.BSC ? "BNB" : "Algo"}
                       </label>
-                    ) : (
-                      <Loader />
-                    )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <Loader />
+                )}
               </div>
             </div>
             <button
@@ -169,18 +173,9 @@ function Transfer({ data, handlers, transaction, errors, loaders }) {
         </div>
       </div>
 
-      {/* <div className="notifsBlock">
-        {amountZero && (
-          <AmountZeroError showAmountZeroError={handleAmountZeroError} />
-        )}
-        {showAddressPasted && (
-          <AddressError showAddressError={handleAddressError} />
-        )}
-        {amountError && <AmountError showAmountError={handleAmountError} />}
-        {wrongAddressError && (
-          <WrongAddressError showWrongAddressError={handleWrongAddressError} />
-        )}
-        </div>*/}
+      <Errors balance={balance} />
     </>
   );
 }
+
+export default Transfer;

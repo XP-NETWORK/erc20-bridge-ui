@@ -5,11 +5,11 @@
   position: absolute;
   left: 50%;
   top: 40%;
-  -moz-transform: translate(-50%, -50%); /* Firefox */
-  -ms-transform: translate(-50%, -50%); /* IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
-  -o-transform: translate(-50%, -50%); /* Opera */
-  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%) !important; /* Firefox */
+  -ms-transform: translate(-50%, -50%) !important; /* IE 9 */
+  -webkit-transform: translate(-50%, -50%) !important; /* Safari and Chrome*/
+  -o-transform: translate(-50%, -50%) !important; /* Opera */
+  transform: translate(-50%, -50%) !important;
   z-index: 3;
 }
 .approve-modal .modal-content {
@@ -93,5 +93,3 @@
   box-shadow: inset 0 0 0 2px #395feb;
   animation: clipMe 3s linear infinite;
 }
-
-

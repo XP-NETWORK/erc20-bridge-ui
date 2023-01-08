@@ -95,7 +95,7 @@ export default function Report() {
     refInt.current && clearInterval(refInt.current);
     //dispatch(reset());
     //navigate("/");
-    window.location.reload();
+    window.open("/", "_self");
     //restart redux
   };
 
