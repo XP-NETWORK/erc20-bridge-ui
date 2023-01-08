@@ -1,17 +1,17 @@
 import "./App.css";
 import Confirmation from "./components/Confirmation";
-
+import React from "react";
 import Footer from "./components/Footer";
 
 import Report from "./components/Report";
-import Transfer from "./components/Transfer";
+//import Transfer from "./components/Transfer";
 import { Routes, Route } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { connectedAccount } from "./store/accountSlice";
 import Connect from "./components/Connect";
-
+import { compose } from "redux";
 import ErrorPopup from "./components/errors/ErrorPopup";
 
 import { useNavigate } from "react-router";
@@ -22,11 +22,20 @@ import { parentAccountChange, inIframe } from "./utils/utilsFunc";
 import factory from "./service/chainFactory";
 
 import { TransferContainer } from "./components/containers/Transfer";
+import { TransferHandlers } from "./components/containers/handlers/Transfer";
+import { TransferEffects } from "./components/containers/effects/Transfer";
+import Transfer from "./components/views/Transfer";
 
 const Test = (props) => {
   console.log(props);
   return <div>1</div>;
 };
+
+const Comp = compose(
+  TransferContainer,
+  TransferHandlers,
+  TransferEffects
+)(Transfer); //TransferContainer(Test);
 
 function App() {
   const dispatch = useDispatch();
@@ -51,7 +60,7 @@ function App() {
     account && dispatch(connectedAccount(account));
   }, [account]);
 
-  const Comp = TransferContainer(Test);
+  //const Comp = React.memo(TransferContainer(Test));
 
   return (
     <div className="App">

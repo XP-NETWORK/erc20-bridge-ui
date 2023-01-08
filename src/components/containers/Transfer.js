@@ -16,8 +16,12 @@ export const TransferContainer = (Next) =>
   function A(props) {
     const dispatch = useDispatch();
 
-    const [balance, setBalance] = useState();
-    const [tokenBalance, seTokenBalance] = useState();
+    const interval = useRef(null);
+
+    const [balance, setBalance] = useState("");
+    const [tokenBalance, seTokenBalance] = useState("");
+    const [blury, setBlury] = useState(true);
+    const [loadingFees, setLoadingFees] = useState(true);
 
     const { transaction, account } = useSelector(({ account }) => ({
       account: account.address,
@@ -36,6 +40,10 @@ export const TransferContainer = (Next) =>
         chain.getFees(ChainNonce[fromChain]),
       ]);
 
+      console.log(balance, "balance");
+
+      console.log(tokenBalance, "tokenBalance");
+
       setBalance(balance);
       seTokenBalance(tokenBalance);
       dispatch(
@@ -48,16 +56,31 @@ export const TransferContainer = (Next) =>
     };
 
     useEffect(() => {
-      fetchData();
+      (async () => {
+        //setBlury(true);
+        //setLoadingFees(true);
+        await fetchData();
+        setBlury(false);
+        setLoadingFees(false);
+      })();
     }, []);
 
     useEffect(() => {
       //this triggers premanent updateTransactionDetails -> rerender - fix it
-      const interval = setInterval(() => fetchData(), 12000);
+      console.log(account, "account");
+      const interval = setInterval(() => fetchData(), 32000);
       return () => clearInterval(interval);
     }, [fromChain, account, toChain]);
 
     const data = { balance, tokenBalance };
+    const loaders = { loadingFees, blury };
 
-    return <Next {...props} data={data} transaction={transaction} />;
+    return (
+      <Next
+        {...props}
+        data={data}
+        transaction={transaction}
+        loaders={loaders}
+      />
+    );
   };

@@ -7,28 +7,29 @@ const getFeeValue = async () => {
 };
 
 export function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function numberWithCommasTyping(x) {
   return x
-    .toString()
-    .replace(/\D/g, "")
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    ?.toString()
+    ?.replace(/\D/g, "")
+    ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function getNumberType(x) {
-  return Number(x.toString().replace(/\D/g, ""));
+  return Number(x?.toString()?.replace(/\D/g, ""));
 }
 
 export function cutDigitAfterDot(numberToFixed, digitNumber) {
   return parseFloat(numberToFixed)
-    .toFixed(digitNumber)
-    .toString()
-    .replace(/^([\d,]+)$|^([\d,]+)\.0*$|^([\d,]+\.[0-9]*?)0*$/, "$1$2$3");
+    ?.toFixed(digitNumber)
+    ?.toString()
+    ?.replace(/^([\d,]+)$|^([\d,]+)\.0*$|^([\d,]+\.[0-9]*?)0*$/, "$1$2$3");
 }
 
 export const parentAccountChange = async (event) => {
+  console.log(event, "event");
   if (event.data?.type === "ethAddress" && window.ethereum) {
     const parentAddress = event.data.address;
     console.log(parentAddress);

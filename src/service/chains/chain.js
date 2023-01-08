@@ -56,7 +56,6 @@ class AbstractChain {
   }
 
   async getBalance(account) {
-    console.log(this.nonce);
     try {
       const res = await this.bridge.balance(this.nonce, account);
       return res.dividedBy(ChainInfo[this.nonce].decimals).toNumber();
@@ -67,7 +66,6 @@ class AbstractChain {
   }
 
   async getTokens(account) {
-    console.log(ChainInfo[this.nonce].xpnetToken);
     try {
       const res = await bridge.tokenBalance(
         this.nonce,
