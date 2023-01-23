@@ -28,76 +28,69 @@ import { TransferContainer } from "./components/containers/Transfer";
 
 import { Popup } from "./components/popup";
 
-function ConnectModal({ children }) {
-  const modalRoot = document.querySelector("#connect-modal");
-
-  const elRef = useRef(null);
-  if (!elRef.current) elRef.current = document.createElement("div");
-
-  useEffect(() => {
-    const el = elRef.current; // non-null assertion because it will never be null
-    modalRoot?.appendChild(el);
-    // return () => {
-    //     modalRoot.removeChild(el);
-    // };
-  }, []);
-  return createPortal(children, elRef.current);
-}
-
 const Test = (props) => {
-  console.log(props);
-  return <div>1</div>;
+    console.log(props);
+    return <div>1</div>;
 };
 
 function App() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const popup = useSelector((state) => state.account.popup);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const popup = useSelector((state) => state.account.popup);
 
-  const { account } = useWeb3React();
+    const { account } = useWeb3React();
 
-  const { error } = useSelector((state) => ({ error: state.account.error }));
+    const { error } = useSelector((state) => ({ error: state.account.error }));
 
-  useEffect(() => {
-    if (inIframe()) {
-      window.addEventListener("message", parentAccountChange);
-      document.body.style.background = "#f7f7f9";
-    }
+    useEffect(() => {
+        if (inIframe()) {
+            window.addEventListener("message", parentAccountChange);
+            document.body.style.background = "#f7f7f9";
+        }
 
-    //navigate("/");
+        //navigate("/");
 
-    return () => window.removeEventListener("message", parentAccountChange);
-  }, []);
+        return () => window.removeEventListener("message", parentAccountChange);
+    }, []);
 
-  useEffect(() => {
-    account && dispatch(connectedAccount(account));
-  }, [account]);
+    useEffect(() => {
+        account && dispatch(connectedAccount(account));
+    }, [account]);
 
-  const Comp = TransferContainer(Test);
+    const Comp = TransferContainer(Test);
 
-  const isMob = window.innerWidth <= 800;
+    const isMob = window.innerWidth <= 800;
 
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="App">
-          <NavBar />
-          <div className="flexColumn">
-            <Routes>
-              <Route path="/test" element={<Comp />} />
-              <Route path="/" element={<Transfer from={""} to={""} />} />
-              <Route path="/BridgingConfirmation" element={<Confirmation />} />
-              <Route path="/BridgingReport" element={<Report />} />
-            </Routes>
-            {error && <ErrorPopup errorObject={error} />}
-            {popup && <Popup popup={popup} />}
-            {!isMob && <Footer />}
-          </div>
-          <BotFooter />
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="App">
+                    <NavBar />
+                    <div className="flexColumn">
+                        <Routes>
+                            <Route path="/test" element={<Comp />} />
+                            <Route
+                                path="/"
+                                element={<Transfer from={""} to={""} />}
+                            />
+                            <Route
+                                path="/BridgingConfirmation"
+                                element={<Confirmation />}
+                            />
+                            <Route
+                                path="/BridgingReport"
+                                element={<Report />}
+                            />
+                        </Routes>
+                        {error && <ErrorPopup errorObject={error} />}
+                        {popup && <Popup popup={popup} />}
+                        {!isMob && <Footer />}
+                    </div>
+                    <BotFooter />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default App;
