@@ -13,6 +13,7 @@ import {
     MAX_CHAR_ADDRESS,
     CHAINS_EXPLORERS,
     CHAINS_TOKENS,
+    ASSET_ID,
 } from "../utils/consts";
 import { cutDigitAfterDot, numberWithCommas } from "../utils/utilsFunc";
 import { preTransfer, transfer, getXpnetTokenValue } from "../erc20/erc20Utils";
@@ -26,10 +27,13 @@ import {
     setError,
     updateTransactionDetails,
     reset,
+    setOptinTimeOut,
 } from "../store/accountSlice";
 import Error from "./errors/Error";
 import successIcon from "../img/success.svg";
 import { format } from "./helpers";
+import algosdk from "algosdk";
+import TimeOutButton from "./Buttons/TimeOutButton";
 
 export default function Confirmation() {
     const [approveTransaction, setApproveTransaction] = useState(false);
@@ -39,9 +43,11 @@ export default function Confirmation() {
     const [errorMsg, setErrorMsg] = useState("");
     const [showApprovalLoader, setShowApprovalLoader] = useState(false);
     const [showTransferLoader, setShowTransferLoader] = useState(false);
+    // const [loaderWidth, setLoaderWidth] = useState(0);
+
     const optinTimeOut = useSelector((state) => state.account.optinTimeOut);
 
-    const [assetId, setAssetId] = useState("");
+    // const [assetId, setAssetId] = useState("");
 
     const [recievingValueInDollar, setRecievingValueInDollar] = useState(0);
     const transaction = useSelector(
@@ -103,8 +109,6 @@ export default function Confirmation() {
         }
     };
 
-    const editXpnetTokenAmount = () => {};
-
     // const transfer = async () => {
     //   let sourceHash = await transfer(
     //     transaction.fromChain,
@@ -153,6 +157,49 @@ export default function Confirmation() {
             //navigate("/BridgingReport");
         }
     };
+
+    const checkIfOptIn = async () => {
+        const algod = new algosdk.Algodv2(
+            "",
+            "https://mainnet-api.algonode.cloud",
+            443
+        );
+        let isOptIn;
+        try {
+            isOptIn = await algod
+                .accountAssetInformation(
+                    transaction.destinationAddress,
+                    ASSET_ID
+                )
+                .do();
+            if (isOptIn.message === "account asset info not found")
+                return false;
+            else return isOptIn;
+        } catch (error) {
+            return false;
+        }
+    };
+
+    useEffect(() => {
+        let optInInt;
+        let withInt;
+        const checkOptIn = async () => {
+            const resp = await checkIfOptIn();
+            if (resp) dispatch(setOptinTimeOut(false));
+        };
+        // withInt = setInterval(() => {
+        //     setLoaderWidth(loaderWidth + 1);
+        // }, "50");
+        if (optinTimeOut) {
+            optInInt = setInterval(() => {
+                checkOptIn();
+            }, "1000");
+        } else clearInterval(optInInt);
+        return () => {
+            clearInterval(optInInt);
+            clearInterval(withInt);
+        };
+    }, [optinTimeOut]);
 
     return (
         <>
@@ -365,9 +412,7 @@ export default function Confirmation() {
                                 disabled={!approveTransaction}
                             >
                                 Send
-                                {optinTimeOut && (
-                                    <div className="sendTranBtn__wrapper"></div>
-                                )}
+                                {optinTimeOut && <TimeOutButton />}
                             </div>
                             <div className="secureLabel">
                                 <img src={secureIcon} />
@@ -378,12 +423,12 @@ export default function Confirmation() {
                 </div>
             </div>
 
-            {showOptIn && (
+            {/* {showOptIn && (
                 <OptInPopup
                     assetId={assetId}
                     closeOptin={() => setShowOptIn(false)}
                 />
-            )}
+            )} */}
             {showApprovalLoader && (
                 <div className="backgroundLoaders">{<ApprovalLoader />}</div>
             )}

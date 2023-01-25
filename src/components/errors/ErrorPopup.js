@@ -28,7 +28,6 @@ import Connect from "../Connect";
 
 export default function ErrorPopup({ errorObject }) {
     const [fetching, setFetching] = useState(false);
-    console.log(errorObject);
     const address = useSelector(
         (state) => state.account.transactionDetails.destinationAddress
     );
@@ -44,23 +43,23 @@ export default function ErrorPopup({ errorObject }) {
     //   props.isOpen(false);
     // };
 
-    const optIn = async (id) => {
-        setFetching(true);
-        const signer = storedSigner || (await getMyAlgoSigner(address));
-        console.log("signer", signer);
-        const algo = await bridge.inner(ChainNonce.Algorand);
-        if (id !== "") {
-            try {
-                const tx = await algo.optInAsa(signer, Number(id));
-                if (tx) {
-                    return dispatch(setError(""));
-                }
-            } catch (e) {
-                console.log("cannot opt in", e);
-            }
-            setFetching(false);
-        }
-    };
+    // const optIn = async (id) => {
+    //     setFetching(true);
+    //     const signer = storedSigner || (await getMyAlgoSigner(address));
+    //     console.log("signer", signer);
+    //     const algo = await bridge.inner(ChainNonce.Algorand);
+    //     if (id !== "") {
+    //         try {
+    //             const tx = await algo.optInAsa(signer, Number(id));
+    //             if (tx) {
+    //                 return dispatch(setError(""));
+    //             }
+    //         } catch (e) {
+    //             console.log("cannot opt in", e);
+    //         }
+    //         setFetching(false);
+    //     }
+    // };
 
     const dispatch = useDispatch();
 
@@ -147,7 +146,10 @@ export default function ErrorPopup({ errorObject }) {
                     src={close}
                     alt="close"
                     className="closePopup"
-                    onClick={() => dispatch(setError(""))}
+                    onClick={() => {
+                        dispatch(setOptinTimeOut(true));
+                        dispatch(setError(""));
+                    }}
                 />
                 <img src={ERROR} alt="error" />
                 {content}

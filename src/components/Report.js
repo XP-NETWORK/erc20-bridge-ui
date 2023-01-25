@@ -1,21 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import cancelBtn from "../img/close popup.svg";
-import auditedLogo from "../img/audited.svg";
-import poweredByLogo from "../img/powered by xp.svg";
 import bscIcon from "../img/BSC.svg";
 import algorandIcon from "../img/Algorand.svg";
 import copyIcon from "../img/copy/default.svg";
-import failed from "../img/icon/failed.svg";
-import successIcon from "../img/success.svg";
 
-import secureIcon from "../img/secure tx.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-    updateTransactionDetails,
-    updateHash,
-    reset,
-} from "../store/accountSlice";
+
 import { cutDigitAfterDot } from "../utils/utilsFunc";
 import {
     CHAINS_TYPE,
@@ -30,11 +20,8 @@ import TxnStatus from "./TxReports/TxnStatus";
 const tw = TrxWatcher();
 
 export default function Report() {
-    const MAX_CHAR_ADDRESS = 15;
     const transaction = useSelector((state) => ({
         ...state.account.transactionDetails,
-        //toChain: CHAINS_TYPE.BSC,
-        //fromChain: CHAINS_TYPE.Algorand,
     }));
 
     const refInt = useRef(null);
@@ -45,13 +32,8 @@ export default function Report() {
     const [failedTrx, setFailedTrx] = useState(undefined);
 
     useEffect(() => {
-        setTimeout(() => {
-            //dispatch(updateHash('0xc1fc4c0dc9885fcdb30fd06f7a28460fe2a328c5c57b2ba9c07db6bc4231b3d0'))
-            //setFailedTrx(true);
-        }, 2000);
+        setTimeout(() => {}, 2000);
     }, []);
-
-    //const desthash = ""; //"4FYIXFPO5XC45WNF47I53EIZX7J3ST5VOM6RZELB4LWEZWELBZ5A";
 
     const address = useSelector((state) => state.account.address);
     const navigate = useNavigate();
@@ -238,38 +220,28 @@ export default function Report() {
                                     ) : (
                                         <img src={algorandIcon} />
                                     )}
-
-                                    {
-                                        // failedTrx ? (
-                                        //     <div className="failedTrx">
-                                        //         {" "}
-                                        //         <span>Fail</span>{" "}
-                                        //         <img src={failed} alt="failed" />
-                                        //     </div>
-                                        // ) :
-                                        destHash ? (
-                                            <a
-                                                className="accountAddressLabel"
-                                                href={`${
-                                                    CHAINS_EXPLORERS_TX[
-                                                        transaction.toChain
-                                                    ]
-                                                }${destHash}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                            >
-                                                {destHash
-                                                    ?.slice(0, 10)
-                                                    ?.toUpperCase() +
-                                                    "..." +
-                                                    destHash
-                                                        ?.slice(-4)
-                                                        ?.toUpperCase()}
-                                            </a>
-                                        ) : (
-                                            <Loader />
-                                        )
-                                    }
+                                    {destHash ? (
+                                        <a
+                                            className="accountAddressLabel"
+                                            href={`${
+                                                CHAINS_EXPLORERS_TX[
+                                                    transaction.toChain
+                                                ]
+                                            }${destHash}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            {destHash
+                                                ?.slice(0, 10)
+                                                ?.toUpperCase() +
+                                                "..." +
+                                                destHash
+                                                    ?.slice(-4)
+                                                    ?.toUpperCase()}
+                                        </a>
+                                    ) : (
+                                        <Loader />
+                                    )}
                                     <button>
                                         <img
                                             src={copyIcon}
@@ -296,11 +268,23 @@ export default function Report() {
                                 </label>
                             </div>
                         </div>
-                        {/* <button className="connectYourWalletBtn">Bridge explorer</button> */}
-                        <div className="secureLabel">
-                            {/* <img src={secureIcon} />
-              <label>Secure transaction</label> */}
-                        </div>
+                        {sourceHash && (
+                            <button
+                                onClick={() =>
+                                    window.open(
+                                        "https://stake-testing.xp.network/",
+                                        "_top"
+                                    )
+                                }
+                                className="connectYourWalletBtn"
+                            >
+                                Stake $XPNET
+                            </button>
+                        )}
+                        {/* <div className="secureLabel">
+                            <img src={secureIcon} />
+                            <label>Secure transaction</label>
+                        </div> */}
                     </div>
                 </div>
             </div>
