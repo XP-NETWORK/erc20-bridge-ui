@@ -558,7 +558,7 @@ export default function Transfer(props) {
                                     : handleClickConnect
                             }
                         >
-                            {currentAccount ? "Next" : "Connect Wallet"}
+                            {currentAccount ? "Next" : "Connect your wallet"}
                         </button>
                         <div
                             className="secureLabel"

@@ -129,8 +129,8 @@ body {
 .notifsBlock {
     position: fixed;
     left: 20px;
-    top: 20px;
-    width: 20%; /*media*/
+    top: 100px;
+    /* width: 20%; media */
 }
 
 .icontext,

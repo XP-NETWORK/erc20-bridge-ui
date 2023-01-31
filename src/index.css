@@ -248,8 +248,8 @@ code {
 .walletList .closePopup {
     position: absolute;
     z-index: 9999;
-    right: 15px;
-    top: 15px;
+    right: 30px;
+    top: 30px;
     cursor: pointer;
 }
 
@@ -278,9 +278,13 @@ code {
     position: relative;
     z-index: 12;
 }
+.connect-modal {
+    max-width: 370px;
+    padding: 20px 0;
+}
 
 .wraper {
-    padding: 10px 0;
+    padding: 40px 40px 0 40px;
     width: 420px;
     margin: 0 auto;
     justify-self: center;
@@ -291,8 +295,20 @@ code {
     height: inherit;
 }
 
+.connect__wrapper {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.connect__wrapper .transferBoxTitle {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 150%;
+}
+
 .wraperConfirm {
-    padding: 10px;
+    padding: 24px;
     width: 420px;
     margin: 0 auto;
     justify-self: center;
@@ -347,7 +363,7 @@ code {
 }
 
 .amountLabel {
-    width: 53px;
+    width: 99px;
     height: 18px;
     font-family: "Inter";
     font-style: normal;
@@ -360,10 +376,11 @@ code {
 }
 
 .flexRow {
-    width: inherit;
+    /* width: inherit; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 12px;
 }
 
 .xpnetAmount {
@@ -974,7 +991,6 @@ button {
     }
 
     .amountError {
-        width: 80vw !important;
         text-align: left;
         align-self: center;
     }

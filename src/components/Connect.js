@@ -224,8 +224,8 @@ export default function Connect({
 
     return (
         <div className="flexColumn">
-            <div className="transferBox">
-                <div className="wraper">
+            <div className="transferBox connect-modal">
+                <div className="connect__wrapper">
                     <h1 className="transferBoxTitle">Connect Wallet</h1>
                     <div className="walletsWrapper">
                         {wallets.metaMask && (
